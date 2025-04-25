@@ -9,15 +9,15 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>edu.eci.cvds</groupId>
-	<artifactId>LabReserves</artifactId>
+	<artifactId>EciBienestarMod3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>LabReserves</name>
-	<description>Project of reserves of the ECI computer laboratory</description>
+	<name>EciBienestarMod3</name>
+	<description>Extracurricular Class Attendance Module</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
-		<sonar.organization>sunteaback</sonar.organization>
+		<sonar.organization>hadesBack</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	<dependencies>
@@ -206,16 +206,13 @@
 						<configuration>
 							<excludes>
 								<exclude>/configurators/</exclude>
-								<exclude>edu/eci/cvds/labReserves/services/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/controller/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/collections/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/dto/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/repository.mongodb/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/LabReserve.*</exclude>
-								<exclude>edu/eci/cvds/labReserves/security/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/util/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/security/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/config/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/service/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/controller/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/dto/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/repository/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/EciBienestarMod3.*</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/security/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/config/**</exclude>
 							</excludes>
 						</configuration>
 					</execution>
@@ -232,7 +229,7 @@
 										<limit>
 											<counter>CLASS</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.0</minimum><!--Porcentaje mínimo de cubrimiento para construir el proyecto-->
+											<minimum>0.85</minimum><!--Porcentaje mínimo de cubrimiento para construir el proyecto-->
 										</limit>
 									</limits>
 								</rule>
