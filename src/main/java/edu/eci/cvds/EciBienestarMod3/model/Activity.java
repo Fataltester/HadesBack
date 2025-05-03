@@ -1,7 +1,7 @@
 package edu.eci.cvds.EciBienestarMod3.model;
 
 import org.springframework.data.mongodb.core.mapping.Document;
-
+import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
