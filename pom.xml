@@ -14,7 +14,7 @@
 	<name>EciBienestarMod3</name>
 	<description>Extracurricular Class Attendance Module</description>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<sonar.organization>hadesBack</sonar.organization>
