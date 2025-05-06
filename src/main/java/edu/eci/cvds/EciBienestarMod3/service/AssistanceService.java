@@ -4,6 +4,11 @@ import edu.eci.cvds.EciBienestarMod3.repository.AssistanceMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import edu.eci.cvds.EciBienestarMod3.model.Assistance;
+import edu.eci.cvds.EciBienestarMod3.model.EciBienestarException;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.UUID;
 
 
 @Service
@@ -13,9 +18,6 @@ public class AssistanceService {
     private AssistanceMongoRepository assistanceRepo;
 
     public Assistance createAssistance(Assistance assistance) {
-        if (assistance.getId() == null || assistance.getId().isEmpty()) {
-            assistance.setId(UUID.randomUUID().toString());
-        }
         return assistanceRepo.save(assistance);
     }
 
@@ -35,19 +37,37 @@ public class AssistanceService {
         }
     }
 
-    public List<Assistance> getAssistancesByActivity(String idActivity) {
+    /*public List<Assistance> getAssistancesByActivity(String idActivity) {
         return assistanceRepo.findByIdActivity(idActivity);
+    }*/
+
+    public List<Assistance> getAssistancesBySchedule(String idSchedule) {
+        return assistanceRepo.findByIdSchedule(idSchedule);
     }
 
     public List<Assistance> getAssistancesByUser(int userId) {
         return assistanceRepo.findByUserId(userId);
     }
 
-    public List<Assistance> getAssistancesByUserRol(String userRol) {
+    /*public List<Assistance> getAssistancesByUserRol(String userRol) {
         return assistanceRepo.findByUserRol(userRol);
+    }*/
+
+    public List<Assistance> getAssistancesByUserNameContaining(String userName) {
+        return assistanceRepo.findByUserNameContaining(userName);
     }
 
-    public Assistance registerAssistance(Assistance assistance) {
+    public List<Assistance> getAssistancesByUserRol(String userRol) {
+        List<Assistance> assistances = new ArrayList<>();
+        for (Assistance assistance : assistanceRepo.findAll()) {
+            if (assistance.getUserRol().equals(userRol)) {
+                assistances.add(assistance);
+            }
+        }
+        return assistances;
+    }
+
+    /*public Assistance registerAssistance(Assistance assistance) {
         // Verificar si ya existe una asistencia para este usuario y actividad
         Assistance existingAssistance = assistanceRepo.findByUserIdAndIdActivity(
                 assistance.getUserId(), assistance.getIdActivity());
@@ -62,14 +82,29 @@ public class AssistanceService {
             assistance.setId(UUID.randomUUID().toString());
         }
         return assistanceRepo.save(assistance);
-    }
+    }*/
 
     public void deleteAssistance(String id) {
         assistanceRepo.deleteById(id);
     }
 
-    public int confirmAllAssistancesForActivity(String idActivity) {
+    /*public int confirmAllAssistancesForActivity(String idActivity) {
         List<Assistance> assistances = assistanceRepo.findByIdActivity(idActivity);
+        int count = 0;
+
+        for (Assistance assistance : assistances) {
+            if (!assistance.isConfirmation()) {
+                assistance.setConfirmation(true);
+                assistanceRepo.save(assistance);
+                count++;
+            }
+        }
+
+        return count;
+    }*/
+
+    public int confirmAllAssistancesForSchedule(String idSchedule) {
+        List<Assistance> assistances = assistanceRepo.findByIdSchedule(idSchedule);
         int count = 0;
 
         for (Assistance assistance : assistances) {
@@ -83,12 +118,12 @@ public class AssistanceService {
         return count;
     }
 
-    public List<Assistance> getConfirmedAssistancesByActivity(String idActivity) {
-        return assistanceRepo.findByIdActivityAndConfirmation(idActivity, true);
+    public List<Assistance> getConfirmedAssistancesBySchedule(String idSchedule) {
+        return assistanceRepo.findByIdScheduleAndConfirmation(idSchedule, true);
     }
 
-    public boolean hasUserAttendedActivity(int userId, String idActivity) {
-        Assistance assistance = assistanceRepo.findByUserIdAndIdActivity(userId, idActivity);
+    public boolean hasUserAttendedSchedule(int userId, String idSchedule) {
+        Assistance assistance = assistanceRepo.findByUserIdAndIdSchedule(userId, idSchedule);
         return assistance != null && assistance.isConfirmation();
     }
 }
