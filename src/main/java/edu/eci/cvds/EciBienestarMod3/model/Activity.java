@@ -160,6 +160,10 @@ public class Activity {
         }
     }
 
+    public void setSchedules(List<String> schedules) {
+        this.schedules = schedules;
+    }
+
     public void addResource(Resource resource) {
         resources.add(resource);
     }
