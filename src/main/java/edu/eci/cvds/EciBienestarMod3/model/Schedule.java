@@ -3,7 +3,6 @@ package edu.eci.cvds.EciBienestarMod3.model;
 import edu.eci.cvds.EciBienestarMod3.model.enumeration.ScheduleState;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,13 +21,9 @@ public class Schedule {
     @Id
     private String id;
 
-    @NonNull
     private Integer numberDay;
-    @NonNull
     private Month month;
-    @NonNull
     private Integer year;
-    @NonNull
     private String idActivity;
 
 
