@@ -15,9 +15,18 @@ public class Assistance {
     private String userName;       // Nombre completo del usuario
     private int userId;            // ID del usuario
     private String userRol;        // Rol del usuario (Estudiante, Docente, etc.)
-    private String idActivity;     // ID de referencia a la actividad
+    private String idSchedule;     // ID de referencia al horario de cada asistencia
 
     public Assistance() {
+    }
+
+    public Assistance(String id, boolean confirmation, String userName, int userId, String userRol, String idSchedule) {
+        this.id = id;
+        this.confirmation = confirmation;
+        this.userName = userName;
+        this.userId = userId;
+        this.userRol = userRol;
+        this.idSchedule = idSchedule;
     }
 
     // GETTERS
@@ -43,7 +52,7 @@ public class Assistance {
     }
 
     public String getIdActivity() {
-        return idActivity;
+        return idSchedule;
     }
 
     // SETTERS
@@ -69,6 +78,6 @@ public class Assistance {
     }
 
     public void setIdActivity(String idActivity) {
-        this.idActivity = idActivity;
+        this.idSchedule = idActivity;
     }
 }
