@@ -1,7 +1,9 @@
 package edu.eci.cvds.EciBienestarMod3.model;
 
 import org.springframework.data.mongodb.core.mapping.Document;
-
+import org.springframework.data.mongodb.core.mapping.Field;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.annotation.Id;
@@ -12,14 +14,19 @@ public class Activity {
     @Id
     private String id;
 
+    private LocalTime startHour;
+    private LocalTime endHour;
+    private DayOfWeek dayWeek;
+    private int year;
+    private int semester;
+
     private String teacher;
     private int teacherId;
     private String activityType;
-    private String state;
-    private int capacityMaximum;
-    private int capacityCurrent;
     private String location;
-    private Schedule schedule;
+    private int capacityMaximum;
+
+    private List<String> schedules = new ArrayList<>();
     private List<Resource> resources = new ArrayList<>();
 
     private static List<String> types = new ArrayList<>();
@@ -34,7 +41,6 @@ public class Activity {
 
     //GETTERS
 
-
     public String getId() {
         return id;
     }
@@ -47,36 +53,48 @@ public class Activity {
         return activityType;
     }
 
-    public String getState() {
-        return state;
-    }
-
-    public int getCapacityMaximum() {
-        return capacityMaximum;
-    }
-
-    public int getCapacityCurrent() {
-        return capacityCurrent;
-    }
-
     public String getLocation() {
         return location;
+    }
+
+    public LocalTime getStartHour() {
+        return startHour;
+    }
+
+    public LocalTime getEndHour() {
+        return endHour;
+    }
+
+    public DayOfWeek getDayWeek() {
+        return dayWeek;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public int getSemester() {
+        return semester;
     }
 
     public static List<String> getTypes() {
         return new ArrayList<>(types);
     }
 
-    public Schedule getSchedule() {
-        return schedule;
-    }
-
     public List<Resource> getResources() {
         return resources;
     }
 
+    public List<String> getSchedules() {
+        return schedules;
+    }
+
     public int getTeacherId() {
         return teacherId;
+    }
+
+    public int getCapacityMaximum() {
+        return capacityMaximum;
     }
 
     //SETTERS
@@ -90,28 +108,40 @@ public class Activity {
         this.teacher = teacher;
     }
 
-    public void setActivityType(String activityType) {
-        this.activityType = activityType;
+    public void setActivityType(String activityType) throws EciBienestarException {
+        if (types.contains(activityType)) {
+            this.activityType = activityType;
+        }else{
+            throw new EciBienestarException(EciBienestarException.TYPE_NOT_FOUND);
+        }
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setStartHour(LocalTime startHour) {
+        this.startHour = startHour;
     }
 
-    public void setCapacityMaximum(int capacityMaximum) {
-        this.capacityMaximum = capacityMaximum;
+    public void setEndHour(LocalTime endHour) {
+        this.endHour = endHour;
     }
 
-    public void setCapacityCurrent(int capacityCurrent) {
-        this.capacityCurrent = capacityCurrent;
+    public void setDayWeek(DayOfWeek dayWeek) {
+        this.dayWeek = dayWeek;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public void setSemester(int semester) throws EciBienestarException {
+        if (semester == 1 || semester == 2) {
+            this.semester = semester;
+        }else {
+            throw new EciBienestarException(EciBienestarException.SEMESTER_LONGER_THAN_REQUIRED);
+        }
     }
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public void setSchedule(Schedule schedule) {
-        this.schedule = schedule;
     }
 
     public void setResources(List<Resource> resources) {
@@ -122,12 +152,28 @@ public class Activity {
         this.teacherId = teacherId;
     }
 
+    public void setCapacityMaximum(int capacityMaximum) throws EciBienestarException {
+        if (capacityMaximum > 0) {
+            this.capacityMaximum = capacityMaximum;
+        }else {
+            throw new EciBienestarException(EciBienestarException.MAXIMUM_CAPACITY_NOT_POSSIBLE);
+        }
+    }
+
     public void addResource(Resource resource) {
         resources.add(resource);
     }
 
     public void removeResource(Resource resource) {
         resources.remove(resource);
+    }
+
+    public void addSchedule(String schedule) {
+        schedules.add(schedule);
+    }
+
+    public void removeSchedule(String schedule) {
+        schedules.remove(schedule);
     }
 
     public static void addType(String type) {

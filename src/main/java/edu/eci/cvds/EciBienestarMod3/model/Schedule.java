@@ -1,10 +1,13 @@
 package edu.eci.cvds.EciBienestarMod3.model;
-
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 
 @Document(collection = "Schedule")
@@ -13,12 +16,14 @@ public class Schedule {
     @Id
     private String id;
 
-    private LocalTime startHour;
-    private LocalTime endHour;
     private int numberDay;
-    private DayOfWeek dayWeek;
     private Month month;
-    private int year;
+
+    private int capacityCurrent;
+    private String state;
+    private String idActivity;
+
+    private List<Integer> assistances = new ArrayList<>();
 
     public Schedule() {}
 
@@ -28,28 +33,32 @@ public class Schedule {
         this.id = id;
     }
 
-    public void setStartHour(LocalTime startHour) {
-        this.startHour = startHour;
-    }
-
-    public void setEndHour(LocalTime endHour) {
-        this.endHour = endHour;
-    }
-
     public void setNumberDay(int numberDay) {
         this.numberDay = numberDay;
-    }
-
-    public void setDayWeek(DayOfWeek dayWeek) {
-        this.dayWeek = dayWeek;
     }
 
     public void setMonth(Month month) {
         this.month = month;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public void setCapacityCurrent(int capacityCurrent) {
+        this.capacityCurrent = capacityCurrent;
+    }
+
+    public void setIdActivity(String idActivity) {
+        this.idActivity = idActivity;
+    }
+
+    public void addAssistance(int assistance) {
+        assistances.add(assistance);
+    }
+
+    public void removeAssistance(int assistance) {
+        assistances.remove(assistance);
     }
 
     //GETTERS
@@ -58,27 +67,31 @@ public class Schedule {
         return id;
     }
 
-    public LocalTime getStartHour() {
-        return startHour;
-    }
-
-    public LocalTime getEndHour() {
-        return endHour;
-    }
-
     public int getNumberDay() {
         return numberDay;
-    }
-
-    public DayOfWeek getDayWeek() {
-        return dayWeek;
     }
 
     public Month getMonth() {
         return month;
     }
 
-    public int getYear() {
-        return year;
+    public String getState() {
+        return state;
+    }
+
+    public int getCapacityCurrent() {
+        return capacityCurrent;
+    }
+
+    public String getIdActivity() {
+        return idActivity;
+    }
+
+    public List<Integer> getAssistances() {
+        return assistances;
+    }
+
+    public int getTotalAssistances() {
+        return assistances.size();
     }
 }
