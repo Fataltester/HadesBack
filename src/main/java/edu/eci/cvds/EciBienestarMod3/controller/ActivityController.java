@@ -35,12 +35,12 @@ public class ActivityController {
 
     @PostMapping("/")
     public Activity createActivity(@RequestBody Activity activity) {
-        Activity createActiv = activityServ.createActicity(activity);
+        Activity newActivity = activityServ.createActicity(activity);
 
         LocalDate inicioSemestre;
         LocalDate finalSemestre;
 
-        if(activity.getSemester() == 1){
+        if(newActivity.getSemester() == 1){
             inicioSemestre = LocalDate.of(2025, 2, 1);
             finalSemestre = LocalDate.of(2025, 5, 31);
         }else{
@@ -48,9 +48,10 @@ public class ActivityController {
             finalSemestre = LocalDate.of(2025, 11, 30);
         }
 
-        scheduleService.createScheduleBetweenTwoDates(inicioSemestre,finalSemestre,createActiv.getId());
-        Activity finalActivity = activityServ.createActicity(activity);
-        return finalActivity;
+        List<String> schedules =  scheduleService.createScheduleBetweenTwoDates(inicioSemestre,finalSemestre,newActivity.getId());
+        newActivity.setSchedules(schedules);
+
+        return activityServ.createActicity(newActivity);
     }
 
     @GetMapping("/all")

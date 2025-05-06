@@ -32,23 +32,13 @@ public class ScheduleService {
         }
     }
 
-    public List<Schedule> createScheduleBetweenTwoDates(LocalDate startDate, LocalDate endDate, String activityId){
+    public List<String> createScheduleBetweenTwoDates(LocalDate startDate, LocalDate endDate, String activityId){
         Optional<Activity> activityOptional = activityRepository.findById(activityId);
         if(activityOptional.isEmpty()){
             return new ArrayList<>();
         }
 
-        List<Schedule> schedules = new ArrayList<>();
-        /*
-        POR SI LAS MOSCAS
-        1 = Lunes (MONDAY)
-        2 = Martes (TUESDAY)
-        3 = Miércoles (WEDNESDAY)
-        4 = Jueves (THURSDAY)
-        5 = Viernes (FRIDAY)
-        6 = Sábado (SATURDAY)
-        7 = Domingo (SUNDAY)
-         */
+        List<String> schedules = new ArrayList<>();
 
         List<LocalDate> fechas = getDatesForWeekday(startDate,endDate,activityOptional.get().getDayWeek());
         for(LocalDate fecha: fechas){
@@ -57,7 +47,8 @@ public class ScheduleService {
             schedule.setMonth(fecha.getMonth());
             schedule.setYear(fecha.getYear());
             schedule.setIdActivity(activityId);
-            schedules.add(createSchedule(schedule));
+            Schedule newSchedule = scheduleRepository.save(schedule);
+            schedules.add(newSchedule.getId());
         }
 
         return schedules;
