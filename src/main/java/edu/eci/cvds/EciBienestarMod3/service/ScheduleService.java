@@ -6,6 +6,7 @@ import edu.eci.cvds.EciBienestarMod3.repository.ScheduleMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,6 +50,14 @@ public class ScheduleService {
         }else{
             return  null;
         }
+    }
+
+    List<Schedule> findByState(ScheduleState state){
+        return scheduleRepository.findByState(state);
+    }
+
+    List<Schedule> findByStates(List<ScheduleState> states){
+        return  scheduleRepository.findByStateIn((states));
     }
 
 }
