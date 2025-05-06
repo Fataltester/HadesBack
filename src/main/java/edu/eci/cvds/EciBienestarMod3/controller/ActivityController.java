@@ -4,6 +4,7 @@ import edu.eci.cvds.EciBienestarMod3.model.Activity;
 import edu.eci.cvds.EciBienestarMod3.model.EciBienestarException;
 import edu.eci.cvds.EciBienestarMod3.model.Schedule;
 import edu.eci.cvds.EciBienestarMod3.service.ActivityService;
+import edu.eci.cvds.EciBienestarMod3.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -25,10 +27,30 @@ public class ActivityController {
     @Autowired
     private ActivityService activityServ;
 
+    @Autowired
+    private ScheduleService scheduleService;
+
+    //Primer semestre Febrero 1 - Hasta Mayo 31
+    //Segundo semstre Agosto 1 - Hasta Noviembre 30
+
     @PostMapping("/")
     public Activity createActivity(@RequestBody Activity activity) {
         Activity createActiv = activityServ.createActicity(activity);
-        return createActiv;
+
+        LocalDate inicioSemestre;
+        LocalDate finalSemestre;
+
+        if(activity.getSemester() == 1){
+            inicioSemestre = LocalDate.of(2025, 2, 1);
+            finalSemestre = LocalDate.of(2025, 5, 31);
+        }else{
+            inicioSemestre = LocalDate.of(2025, 8, 1);
+            finalSemestre = LocalDate.of(2025, 11, 30);
+        }
+
+        scheduleService.createScheduleBetweenTwoDates(inicioSemestre,finalSemestre,createActiv.getId());
+        Activity finalActivity = activityServ.createActicity(activity);
+        return finalActivity;
     }
 
     @GetMapping("/all")

@@ -20,22 +20,20 @@ import java.util.List;
 public class Schedule {
 
     @Id
-    @NonNull
     private String id;
-    @NonNull
-    private ScheduleState state;
 
     @NonNull
-    private int numberDay;
+    private Integer numberDay;
     @NonNull
     private Month month;
-
+    @NonNull
+    private Integer year;
     @NonNull
     private String idActivity;
-    @NonNull
-    private int capacityCurrent;
 
-    @NonNull
+
+    private ScheduleState state = ScheduleState.ESPERA;
+    private Integer capacityCurrent = 0;
     private List<Integer> assistances = new ArrayList<>();
 
 }
