@@ -6,6 +6,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import edu.eci.cvds.EciBienestarMod3.model.Assistance;
 
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import java.util.List;
 
 
@@ -36,9 +43,9 @@ public class AssistanceController {
         assistanceServ.updateAssistanceConfirmation(id, confirmation);
     }
 
-    @GetMapping("/activity/{idActivity}")
-    public List<Assistance> getAssistancesByActivity(@PathVariable String idActivity) {
-        return assistanceServ.getAssistancesByActivity(idActivity);
+    @GetMapping("/schedule/{idSchedule}")
+    public List<Assistance> getAssistancesBySchedule(@PathVariable String idSchedule) {
+        return assistanceServ.getAssistancesBySchedule(idSchedule);
     }
 
     @GetMapping("/user/{userId}")
@@ -51,28 +58,28 @@ public class AssistanceController {
         return assistanceServ.getAssistancesByUserRol(userRol);
     }
 
-    @PostMapping("/register")
+    /*@PostMapping("/register")
     public Assistance registerAssistance(@RequestBody Assistance assistance) {
         return assistanceServ.registerAssistance(assistance);
-    }
+    }*/
 
     @DeleteMapping("/{id}")
     public void deleteAssistance(@PathVariable String id) {
         assistanceServ.deleteAssistance(id);
     }
 
-    @PutMapping("/confirm-all/{idActivity}")
-    public int confirmAllAssistancesForActivity(@PathVariable String idActivity) {
-        return assistanceServ.confirmAllAssistancesForActivity(idActivity);
+    @PutMapping("/confirm-all/{idSchedule}")
+    public int confirmAllAssistancesForSchedule(@PathVariable String idSchedule) {
+        return assistanceServ.confirmAllAssistancesForSchedule(idSchedule);
     }
 
-    @GetMapping("/confirmed/{idActivity}")
-    public List<Assistance> getConfirmedAssistancesByActivity(@PathVariable String idActivity) {
-        return assistanceServ.getConfirmedAssistancesByActivity(idActivity);
+    @GetMapping("/confirmed/{idSchedule}")
+    public List<Assistance> getConfirmedAssistancesBySchedule(@PathVariable String idSchedule) {
+        return assistanceServ.getConfirmedAssistancesBySchedule(idSchedule);
     }
 
-    @GetMapping("/check/{userId}/{idActivity}")
-    public boolean hasUserAttendedActivity(@PathVariable int userId, @PathVariable String idActivity) {
-        return assistanceServ.hasUserAttendedActivity(userId, idActivity);
+    @GetMapping("/check/{userId}/{idSchedule}")
+    public boolean hasUserAttendedSchedule(@PathVariable int userId, @PathVariable String idSchedule) {
+        return assistanceServ.hasUserAttendedSchedule(userId, idSchedule);
     }
 }
