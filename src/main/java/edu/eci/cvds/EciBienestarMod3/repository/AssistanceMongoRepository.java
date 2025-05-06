@@ -9,8 +9,8 @@ import java.util.List;
 
 @Repository
 public interface AssistanceMongoRepository extends MongoRepository<Assistance, String> {
-    @Query("{ 'idActivity' : ?0 }")
-    List<Assistance> findByIdActivity(String idActivity);
+    @Query("{ 'idSchedule' : ?0 }")
+    List<Assistance> findByIdSchedule(String idSchedule);
 
     @Query("{ 'userId' : ?0 }")
     List<Assistance> findByUserId(int userId);
@@ -21,9 +21,13 @@ public interface AssistanceMongoRepository extends MongoRepository<Assistance, S
     @Query("{ 'userRol' : ?0 }")
     List<Assistance> findByUserRol(String userRol);
 
-    @Query("{ 'idActivity' : ?0, 'confirmation' : ?1 }")
-    List<Assistance> findByIdActivityAndConfirmation(String idActivity, boolean confirmation);
+    @Query("{ 'idSchedule' : ?0, 'confirmation' : ?1 }")
+    List<Assistance> findByIdScheduleAndConfirmation(String idSchedule, boolean confirmation);
 
-    @Query("{ 'userId' : ?0, 'idActivity' : ?1 }")
-    Assistance findByUserIdAndIdActivity(int userId, String idActivity);
+    @Query("{ 'userId' : ?0, 'idSchedule' : ?1 }")
+    Assistance findByUserIdAndIdSchedule(int userId, String idSchedule);
+
+    // Por si acas
+    @Query("{ 'idSchedule': { $in: ?0 } }")
+    List<Assistance> findByScheduleIds(List<String> scheduleIds);
 }
