@@ -2,7 +2,6 @@ package edu.eci.cvds.EciBienestarMod3.controller;
 
 import edu.eci.cvds.EciBienestarMod3.model.Activity;
 import edu.eci.cvds.EciBienestarMod3.model.EciBienestarException;
-import edu.eci.cvds.EciBienestarMod3.model.Schedule;
 import edu.eci.cvds.EciBienestarMod3.service.ActivityService;
 import edu.eci.cvds.EciBienestarMod3.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,26 +31,12 @@ public class ActivityController {
 
     //Primer semestre Febrero 1 - Hasta Mayo 31
     //Segundo semstre Agosto 1 - Hasta Noviembre 30
-
     @PostMapping("/")
     public Activity createActivity(@RequestBody Activity activity) {
-        Activity newActivity = activityServ.createActicity(activity);
-
-        LocalDate inicioSemestre;
-        LocalDate finalSemestre;
-
-        if(newActivity.getSemester() == 1){
-            inicioSemestre = LocalDate.of(2025, 2, 1);
-            finalSemestre = LocalDate.of(2025, 5, 31);
-        }else{
-            inicioSemestre = LocalDate.of(2025, 8, 1);
-            finalSemestre = LocalDate.of(2025, 11, 30);
-        }
-
-        List<String> schedules =  scheduleService.createScheduleBetweenTwoDates(inicioSemestre,finalSemestre,newActivity.getId());
-        newActivity.setSchedules(schedules);
-
-        return activityServ.createActicity(newActivity);
+        List<String> schedules =  scheduleService.createScheduleBetweenTwoDates(
+                activity.getSemester(), activity.getId(), activity.getDayWeek());
+        activity.setSchedules(schedules);
+        return activityServ.createActicity(activity);
     }
 
     @GetMapping("/all")
@@ -61,44 +46,37 @@ public class ActivityController {
 
     @GetMapping("/search/teacherId/{teacherId}")
     public List<Activity> getActivityByUserId(@PathVariable int teacherId) {
-        List<Activity> activityList = activityServ.getAllActivitiesByTeacherId(teacherId);
-        return activityList;
+        return activityServ.getAllActivitiesByTeacherId(teacherId);
     }
 
     @GetMapping("/search/activityType/{activityType}")
     public List<Activity> getActivityByActivityType(@PathVariable String activityType) {
-        List<Activity> activityList = activityServ.getAllActivitiesByActivityType(activityType);
-        return activityList;
+        return activityServ.getAllActivitiesByActivityType(activityType);
     }
 
     @GetMapping("/search/location/{location}")
     public List<Activity> getActivityByLocation(@PathVariable String location) {
-        List<Activity> activityList = activityServ.getAllActivitiesByLocation(location);
-        return activityList;
+        return activityServ.getAllActivitiesByLocation(location);
     }
 
     @GetMapping("/search/startHour/{startHour}")
     public List<Activity> getActivityByHour(@PathVariable LocalTime startHour) {
-        List<Activity> activityList = activityServ.getAllActivitiesByHour(startHour);
-        return activityList;
+        return activityServ.getAllActivitiesByHour(startHour);
     }
 
     @GetMapping("/search/dayOfWeek/{dayOfWeek}")
     public List<Activity> getActivityByDayOfWeek(@PathVariable DayOfWeek dayOfWeek) {
-        List<Activity> activityList = activityServ.getAllActivitiesByDayOfWeek(dayOfWeek);
-        return activityList;
+        return activityServ.getAllActivitiesByDayOfWeek(dayOfWeek);
     }
 
     @GetMapping("/search/year/{year}")
     public List<Activity> getActivityByYear(@PathVariable int year) {
-        List<Activity> activityList = activityServ.getAllActivitiesByYear(year);
-        return activityList;
+        return activityServ.getAllActivitiesByYear(year);
     }
 
     @GetMapping("/search/semester/{semester}")
     public List<Activity> getActivityBySemester(@PathVariable int semester) {
-        List<Activity> activityList = activityServ.getAllActivitiesBySemester(semester);
-        return activityList;
+        return activityServ.getAllActivitiesBySemester(semester);
     }
 
     @PutMapping("/update/startHour/{startHour}")
@@ -141,20 +119,12 @@ public class ActivityController {
         activityServ.updateActivityByCapacityMaximum(activity, capacityMaximum);
     }
 
-    /**
-    @GetMapping("/{state}")
-    public List<Activity> getActivityByState(@PathVariable String state) {
-        List<Activity> activityList = activityServ.getAllActivitiesByState(state);
-        return activityList;
-    }
-
-    @PutMapping("/states/{state}")
-    public Schedule updateSceduleByState(@RequestBody Schedule schedule, @PathVariable String state) {
-        Schedule updateActiv = activityServ.updateActivityByState(state);
-    }*/
-
     @DeleteMapping("/activities")
-    public void deleteActivityBySchedule(@RequestBody Activity activity) {
+    public void deleteActivity(@RequestBody Activity activity) {
+        Activity actActivity = activityServ.getActivityBySchedule(activity);
+        for (String id : actActivity.getSchedules()){
+            scheduleService.deleteSchedule(scheduleService.findScheduleById(id));
+        }
         activityServ.deleteActivity(activity);
     }
 }

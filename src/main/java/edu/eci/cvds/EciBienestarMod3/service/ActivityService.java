@@ -26,6 +26,12 @@ public class ActivityService {
         return activityRepo.findAll();
     }
 
+    public Activity getActivityBySchedule(Activity activity) {
+        return activityRepo.getActivityByGeneralSchedules(
+                activity.getActivityType(), activity.getStartHour(),
+                activity.getDayWeek(), activity.getYear(), activity.getSemester());
+    }
+
     public List<Activity> getAllActivitiesByTeacherId(int teacherId) {
         List<Activity> activities = new ArrayList<>();
         for (Activity activity : activityRepo.findAll()) {
@@ -156,18 +162,4 @@ public class ActivityService {
     public void deleteActivity(Activity activity) {
         activityRepo.delete(activity);
     }
-
-    /**
-     public Activity getActivityBySchedule(Schedule schedule) {
-     return activityRepo.findBySchedule(schedule);
-     }
-
-     public List<Activity> getAllActivitiesByState(String state) {
-     List<Activity> activities = new ArrayList<>();
-     return activities;
-     }
-
-     public Schedule updateActivityByState(String state){
-     return null;
-     }*/
 }

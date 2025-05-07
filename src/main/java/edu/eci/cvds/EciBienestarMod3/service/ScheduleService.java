@@ -1,9 +1,7 @@
 package edu.eci.cvds.EciBienestarMod3.service;
 
-import edu.eci.cvds.EciBienestarMod3.model.Activity;
 import edu.eci.cvds.EciBienestarMod3.model.Schedule;
 import edu.eci.cvds.EciBienestarMod3.model.enumeration.ScheduleState;
-import edu.eci.cvds.EciBienestarMod3.repository.ActivityMongoRepository;
 import edu.eci.cvds.EciBienestarMod3.repository.ScheduleMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +18,7 @@ public class ScheduleService {
     @Autowired
     ScheduleMongoRepository scheduleRepository;
 
-    @Autowired
-    ActivityMongoRepository activityRepository;
-
-    Schedule createSchedule(Schedule schedule){
+    public Schedule createSchedule(Schedule schedule){
         //Para evitar que se actualice
         if(scheduleRepository.existsById(schedule.getId())){
             return  null;
@@ -32,15 +27,23 @@ public class ScheduleService {
         }
     }
 
-    public List<String> createScheduleBetweenTwoDates(LocalDate startDate, LocalDate endDate, String activityId){
-        Optional<Activity> activityOptional = activityRepository.findById(activityId);
-        if(activityOptional.isEmpty()){
-            return new ArrayList<>();
-        }
+    public Schedule findScheduleById(String id){
+        return scheduleRepository.findById(id).orElse(null);
+    }
 
+    public List<String> createScheduleBetweenTwoDates(int semester, String activityId, DayOfWeek dayOfWeek){
+        LocalDate startDate;
+        LocalDate endDate;
+        if(semester == 1){
+            startDate = LocalDate.of(2025, 2, 1);
+            endDate = LocalDate.of(2025, 5, 31);
+        }else{
+            startDate = LocalDate.of(2025, 8, 1);
+            endDate = LocalDate.of(2025, 11, 30);
+        }
         List<String> schedules = new ArrayList<>();
 
-        List<LocalDate> fechas = getDatesForWeekday(startDate,endDate,activityOptional.get().getDayWeek());
+        List<LocalDate> fechas = getDatesForWeekday(startDate,endDate,dayOfWeek);
         for(LocalDate fecha: fechas){
             Schedule schedule = new Schedule();
             schedule.setNumberDay(fecha.getDayOfMonth());
@@ -50,13 +53,10 @@ public class ScheduleService {
             Schedule newSchedule = scheduleRepository.save(schedule);
             schedules.add(newSchedule.getId());
         }
-
         return schedules;
     }
 
-
-
-    Schedule deleteSchedule(Schedule schedule){
+    public Schedule deleteSchedule(Schedule schedule){
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(schedule.getId());
 
         if(scheduleOptional.isPresent()){
@@ -72,7 +72,7 @@ public class ScheduleService {
         }
     }
 
-    Schedule changeState(String id, ScheduleState newState){
+    public Schedule changeState(String id, ScheduleState newState){
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(id);
 
         if(scheduleOptional.isPresent()){
@@ -94,8 +94,8 @@ public class ScheduleService {
 
     private List<LocalDate> getDatesForWeekday(LocalDate startDate, LocalDate endDate, DayOfWeek targetDay) {
         List<LocalDate> dates = new ArrayList<>();
-
         LocalDate current = startDate;
+
         while (current.getDayOfWeek() != targetDay) {
             current = current.plusDays(1);
         }
@@ -104,7 +104,6 @@ public class ScheduleService {
             dates.add(current);
             current = current.plusWeeks(1);
         }
-
         return dates;
     }
 }
