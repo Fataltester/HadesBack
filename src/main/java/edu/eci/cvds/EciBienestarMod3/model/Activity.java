@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -42,76 +41,7 @@ public class Activity {
                 "Vitrales", "Voleybol Femenino y Masculino", "Taekwondo", "Tenis de Campo", "Tenis de mesa", "Yoga"));
     }
 
-    public Activity(){}
-
-    //GETTERS
-
-    public String getId() {
-        return id;
-    }
-
-    public String getTeacher() {
-        return teacher;
-    }
-
-    public String getActivityType() {
-        return activityType;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public LocalTime getStartHour() {
-        return startHour;
-    }
-
-    public LocalTime getEndHour() {
-        return endHour;
-    }
-
-    public DayOfWeek getDayWeek() {
-        return dayWeek;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public int getSemester() {
-        return semester;
-    }
-
-    public static List<String> getTypes() {
-        return new ArrayList<>(types);
-    }
-
-    public List<Resource> getResources() {
-        return resources;
-    }
-
-    public List<String> getSchedules() {
-        return schedules;
-    }
-
-    public int getTeacherId() {
-        return teacherId;
-    }
-
-    public int getCapacityMaximum() {
-        return capacityMaximum;
-    }
-
-    //SETTERS
-
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
-    }
+    public Activity() {}
 
     public void setActivityType(String activityType) throws EciBienestarException {
         if (types.contains(activityType)) {
@@ -121,40 +51,12 @@ public class Activity {
         }
     }
 
-    public void setStartHour(LocalTime startHour) {
-        this.startHour = startHour;
-    }
-
-    public void setEndHour(LocalTime endHour) {
-        this.endHour = endHour;
-    }
-
-    public void setDayWeek(DayOfWeek dayWeek) {
-        this.dayWeek = dayWeek;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
     public void setSemester(int semester) throws EciBienestarException {
         if (semester == 1 || semester == 2) {
             this.semester = semester;
         }else {
             throw new EciBienestarException(EciBienestarException.SEMESTER_LONGER_THAN_REQUIRED);
         }
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setResources(List<Resource> resources) {
-        this.resources = resources;
-    }
-
-    public void setTeacherId(int teacherId) {
-        this.teacherId = teacherId;
     }
 
     public void setCapacityMaximum(int capacityMaximum) throws EciBienestarException {
