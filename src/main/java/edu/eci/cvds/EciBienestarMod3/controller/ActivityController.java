@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -125,6 +124,6 @@ public class ActivityController {
         for (String id : actActivity.getSchedules()){
             scheduleService.deleteSchedule(scheduleService.findScheduleById(id));
         }
-        activityServ.deleteActivity(activity);
+        activityServ.deleteActivity(actActivity);
     }
 }
