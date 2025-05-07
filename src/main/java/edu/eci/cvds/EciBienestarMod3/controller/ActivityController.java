@@ -126,5 +126,8 @@ public class ActivityController {
             scheduleService.deleteSchedule(scheduleService.findScheduleById(id));
         }
         activityServ.deleteActivity(activity);
+        for(String scheduleId:schedules){
+            scheduleService.deleteAdminShcedule(scheduleId);
+        }
     }
 }
