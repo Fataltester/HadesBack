@@ -53,9 +53,7 @@ public class ScheduleService {
 
         return schedules;
     }
-
-
-
+    
     Schedule deleteSchedule(Schedule schedule){
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(schedule.getId());
 
@@ -69,6 +67,15 @@ public class ScheduleService {
             }
         }else{
             return  null;
+        }
+    }
+
+    public void deleteAdminShcedule(String schedule){
+        Optional<Schedule> scheduleOptional = scheduleRepository.findById(schedule);
+
+        if(scheduleOptional.isPresent()) {
+            Schedule scheduleDelete = scheduleOptional.get();
+            scheduleRepository.deleteById(scheduleDelete.getId());
         }
     }
 

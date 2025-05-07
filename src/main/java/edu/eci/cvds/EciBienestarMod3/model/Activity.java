@@ -13,7 +13,6 @@ import org.springframework.data.annotation.Id;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @Document(collection = "Activity")
 public class Activity {
 

@@ -155,6 +155,10 @@ public class ActivityController {
 
     @DeleteMapping("/activities")
     public void deleteActivityBySchedule(@RequestBody Activity activity) {
+        List<String> schedules = activity.getSchedules();
         activityServ.deleteActivity(activity);
+        for(String scheduleId:schedules){
+            scheduleService.deleteAdminShcedule(scheduleId);
+        }
     }
 }
