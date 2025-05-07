@@ -161,5 +161,6 @@ public class ActivityService {
 
     public void deleteActivity(Activity activity) {
         activityRepo.delete(activity);
+
     }
 }

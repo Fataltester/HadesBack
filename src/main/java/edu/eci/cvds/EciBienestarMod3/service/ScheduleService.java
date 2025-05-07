@@ -2,6 +2,7 @@ package edu.eci.cvds.EciBienestarMod3.service;
 
 import edu.eci.cvds.EciBienestarMod3.model.Schedule;
 import edu.eci.cvds.EciBienestarMod3.model.enumeration.ScheduleState;
+import edu.eci.cvds.EciBienestarMod3.repository.ActivityMongoRepository;
 import edu.eci.cvds.EciBienestarMod3.repository.ScheduleMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,14 +12,23 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ScheduleService {
 
     @Autowired
     ScheduleMongoRepository scheduleRepository;
+  
+    @Autowired
+    ActivityMongoRepository activityRepository;
 
-    public Schedule createSchedule(Schedule schedule){
+    Schedule createSchedule(Schedule schedule){
+        //Genero un id aleatorio
+        if (schedule.getId() == null) {
+            schedule.setId(UUID.randomUUID().toString());
+        }
+      
         //Para evitar que se actualice
         if(scheduleRepository.existsById(schedule.getId())){
             return  null;
@@ -56,6 +66,7 @@ public class ScheduleService {
         return schedules;
     }
 
+
     public Schedule deleteSchedule(Schedule schedule){
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(schedule.getId());
 
@@ -72,6 +83,17 @@ public class ScheduleService {
         }
     }
 
+
+    public void deleteAdminShcedule(String schedule){
+        Optional<Schedule> scheduleOptional = scheduleRepository.findById(schedule);
+
+        if(scheduleOptional.isPresent()) {
+            Schedule scheduleDelete = scheduleOptional.get();
+            scheduleRepository.deleteById(scheduleDelete.getId());
+        }
+    }
+
+    
     public Schedule changeState(String id, ScheduleState newState){
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(id);
 
