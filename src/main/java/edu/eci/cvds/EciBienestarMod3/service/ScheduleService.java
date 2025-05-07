@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ScheduleService {
@@ -24,6 +25,11 @@ public class ScheduleService {
     ActivityMongoRepository activityRepository;
 
     Schedule createSchedule(Schedule schedule){
+        //Genero un id aleatorio
+        if (schedule.getId() == null) {
+            schedule.setId(UUID.randomUUID().toString());
+        }
+
         //Para evitar que se actualice
         if(scheduleRepository.existsById(schedule.getId())){
             return  null;
