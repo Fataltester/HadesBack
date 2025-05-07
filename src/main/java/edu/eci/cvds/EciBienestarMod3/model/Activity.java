@@ -60,7 +60,7 @@ public class Activity {
     }
 
     public void setCapacityMaximum(int capacityMaximum) throws EciBienestarException {
-        if (capacityMaximum > 0) {
+        if (capacityMaximum > 0 && capacityMaximum < 100) {
             this.capacityMaximum = capacityMaximum;
         }else {
             throw new EciBienestarException(EciBienestarException.MAXIMUM_CAPACITY_NOT_POSSIBLE);

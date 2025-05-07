@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.DayOfWeek;
@@ -31,7 +32,11 @@ public class ActivityController {
     //Primer semestre Febrero 1 - Hasta Mayo 31
     //Segundo semstre Agosto 1 - Hasta Noviembre 30
     @PostMapping("/")
-    public Activity createActivity(@RequestBody Activity activity) {
+    public Activity createActivity(@RequestBody Activity activity) throws EciBienestarException {
+        Activity newActivity = activityServ.getActivityBySchedule(activity);
+        if (newActivity != null) {
+            throw new EciBienestarException(EciBienestarException.ACTIVITY_ALREADY_EXIST);
+        }
         List<String> schedules =  scheduleService.createScheduleBetweenTwoDates(
                 activity.getSemester(), activity.getId(), activity.getDayWeek());
         activity.setSchedules(schedules);
@@ -41,6 +46,11 @@ public class ActivityController {
     @GetMapping("/all")
     public List<Activity> getAllActivities() {
         return activityServ.getAllActivities();
+    }
+
+    @GetMapping("/search/schedules/activity")
+    public Activity getActivityBySchedule(@RequestBody Activity activity) {
+        return activityServ.getActivityBySchedule(activity);
     }
 
     @GetMapping("/search/teacherId/{teacherId}")
@@ -120,10 +130,11 @@ public class ActivityController {
 
     @DeleteMapping("/activities")
     public void deleteActivity(@RequestBody Activity activity) {
-        Activity actActivity = activityServ.getActivityBySchedule(activity);
-        for (String id : actActivity.getSchedules()){
+        Activity currentActivity = activityServ.getActivityBySchedule(activity);
+        List<String> schedules = currentActivity.getSchedules();
+        activityServ.deleteActivity(currentActivity);
+        for (String id : schedules){
             scheduleService.deleteAdminShcedule(id);
         }
-        activityServ.deleteActivity(activity);
     }
 }
