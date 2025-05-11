@@ -58,11 +58,6 @@ public class AssistanceController {
         return assistanceServ.getAssistancesByUserRol(userRol);
     }
 
-    /*@PostMapping("/register")
-    public Assistance registerAssistance(@RequestBody Assistance assistance) {
-        return assistanceServ.registerAssistance(assistance);
-    }*/
-
     @DeleteMapping("/{id}")
     public void deleteAssistance(@PathVariable String id) {
         assistanceServ.deleteAssistance(id);

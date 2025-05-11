@@ -37,9 +37,6 @@ public class AssistanceService {
         }
     }
 
-    /*public List<Assistance> getAssistancesByActivity(String idActivity) {
-        return assistanceRepo.findByIdActivity(idActivity);
-    }*/
 
     public List<Assistance> getAssistancesBySchedule(String idSchedule) {
         return assistanceRepo.findByIdSchedule(idSchedule);
@@ -49,9 +46,6 @@ public class AssistanceService {
         return assistanceRepo.findByUserId(userId);
     }
 
-    /*public List<Assistance> getAssistancesByUserRol(String userRol) {
-        return assistanceRepo.findByUserRol(userRol);
-    }*/
 
     public List<Assistance> getAssistancesByUserNameContaining(String userName) {
         return assistanceRepo.findByUserNameContaining(userName);
@@ -67,41 +61,10 @@ public class AssistanceService {
         return assistances;
     }
 
-    /*public Assistance registerAssistance(Assistance assistance) {
-        // Verificar si ya existe una asistencia para este usuario y actividad
-        Assistance existingAssistance = assistanceRepo.findByUserIdAndIdActivity(
-                assistance.getUserId(), assistance.getIdActivity());
-
-        if (existingAssistance != null) {
-            // Si ya existe, retornamos la existente
-            return existingAssistance;
-        }
-
-        // Si no existe, guardamos la nueva asistencia
-        if (assistance.getId() == null || assistance.getId().isEmpty()) {
-            assistance.setId(UUID.randomUUID().toString());
-        }
-        return assistanceRepo.save(assistance);
-    }*/
-
     public void deleteAssistance(String id) {
         assistanceRepo.deleteById(id);
     }
 
-    /*public int confirmAllAssistancesForActivity(String idActivity) {
-        List<Assistance> assistances = assistanceRepo.findByIdActivity(idActivity);
-        int count = 0;
-
-        for (Assistance assistance : assistances) {
-            if (!assistance.isConfirmation()) {
-                assistance.setConfirmation(true);
-                assistanceRepo.save(assistance);
-                count++;
-            }
-        }
-
-        return count;
-    }*/
 
     public int confirmAllAssistancesForSchedule(String idSchedule) {
         List<Assistance> assistances = assistanceRepo.findByIdSchedule(idSchedule);

@@ -130,8 +130,8 @@ public class ActivityController {
         Schedule updateActiv = activityServ.updateActivityByState(state);
     }*/
 
-    @DeleteMapping("/activities")
-    public void deleteActivityBySchedule(@RequestBody Activity activity) {
-        activityServ.deleteActivity(activity);
-    }
+//    @DeleteMapping("/activities")
+//    public void deleteActivityBySchedule(@RequestBody Activity activity) {
+//        activityServ.deleteActivity(actActivity);
+//    }
 }
