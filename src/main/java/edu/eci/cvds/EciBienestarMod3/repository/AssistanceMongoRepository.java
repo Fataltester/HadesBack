@@ -1,10 +1,13 @@
 package edu.eci.cvds.EciBienestarMod3.repository;
 
+import edu.eci.cvds.EciBienestarMod3.model.Activity;
 import edu.eci.cvds.EciBienestarMod3.model.Assistance;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -30,4 +33,7 @@ public interface AssistanceMongoRepository extends MongoRepository<Assistance, S
     // Por si acas
     @Query("{ 'idSchedule': { $in: ?0 } }")
     List<Assistance> findByScheduleIds(List<String> scheduleIds);
+
+    @Query("{ 'userName' : ?0, 'userRol' : ?1, 'idSchedule' : ?2}")
+    Assistance getAssistanceByGeneralSchedules(String userName, String userRol, String idSchedule);
 }

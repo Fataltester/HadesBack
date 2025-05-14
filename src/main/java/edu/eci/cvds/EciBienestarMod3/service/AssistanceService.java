@@ -1,11 +1,14 @@
 package edu.eci.cvds.EciBienestarMod3.service;
 
+import edu.eci.cvds.EciBienestarMod3.dto.AssistanceRequest;
+import edu.eci.cvds.EciBienestarMod3.model.Activity;
 import edu.eci.cvds.EciBienestarMod3.repository.AssistanceMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import edu.eci.cvds.EciBienestarMod3.model.Assistance;
 import edu.eci.cvds.EciBienestarMod3.model.EciBienestarException;
 
+import java.time.Month;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -17,8 +20,14 @@ public class AssistanceService {
     @Autowired
     private AssistanceMongoRepository assistanceRepo;
 
-    public Assistance createAssistance(Assistance assistance) {
-        return assistanceRepo.save(assistance);
+    public Assistance createAssistance(String schedule, AssistanceRequest assistance) {
+        Assistance assistance1 = new Assistance();
+        assistance1.setIdSchedule(schedule);
+        assistance1.setUserId(assistance.getIdUsuario());
+        assistance1.setUserName(assistance.getNombreUsuario());
+        assistance1.setUserRol(assistance.getRolUsuario());
+        assistance1.setConfirmation(assistance.getConfirmation());
+        return assistanceRepo.save(assistance1);
     }
 
     public List<Assistance> getAllAssistances() {
