@@ -1,5 +1,6 @@
 package edu.eci.cvds.EciBienestarMod3.controller;
 
+import edu.eci.cvds.EciBienestarMod3.dto.ActivityOptionalRequest;
 import edu.eci.cvds.EciBienestarMod3.dto.AssistanceRequest;
 import edu.eci.cvds.EciBienestarMod3.model.Activity;
 import edu.eci.cvds.EciBienestarMod3.model.EciBienestarException;
@@ -40,60 +41,128 @@ public class AssistanceController {
 
     @PostMapping("/newAssistance")
     public Assistance createAssistance(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
-        Activity requiredActivity = activityServ.getActivityBySchedule(activity);
+        Activity requestedActivity = new Activity();
+        requestedActivity.setActivityType(assistanceRequest.getActivityType());
+        requestedActivity.setYear(assistanceRequest.getYear());
+        requestedActivity.setSemester(assistanceRequest.getSemester());
+        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
         List<String> schedules = requiredActivity.getSchedules();
         for(String schedule : schedules){
-            Schedule actSchedule = scheduleRep.getScheduleBy(schedule);
+            Schedule actSchedule = scheduleRep.getScheduleById(schedule);
             if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
+                actSchedule.addAssistance(assistanceRequest.getIdUser());
+                scheduleRep.save(actSchedule);
                 return assistanceServ.createAssistance(schedule,assistanceRequest);
             }
         }
         throw new EciBienestarException(EciBienestarException.TYPE_NOT_FOUND);
     }
 
-    @GetMapping("/historial")
-    public List<Assistance> getAllAssistances() {
-        return assistanceServ.getAllAssistances();
+    @GetMapping("/find/options")
+    public List<Assistance> findAssistanceByOptions(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
+        Activity requestedActivity = new Activity();
+        requestedActivity.setActivityType(assistanceRequest.getActivityType());
+        requestedActivity.setYear(assistanceRequest.getYear());
+        requestedActivity.setSemester(assistanceRequest.getSemester());
+        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
+        List<String> schedules = requiredActivity.getSchedules();
+        for(String schedule : schedules){
+            Schedule actSchedule = scheduleRep.getScheduleById(schedule);
+            if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
+                return assistanceServ.getAssistanceByOptions(assistanceRequest);
+            }
+        }
+        throw new EciBienestarException(EciBienestarException.TYPE_NOT_FOUND);
     }
 
-    // refactorizar
-    @PutMapping("/confirmation/{id}")
-    public void updateAssistanceConfirmation(@PathVariable String id, @RequestBody boolean confirmation) {
-        assistanceServ.updateAssistanceConfirmation(id, confirmation);
-    }
-    // refactorizar
-    @GetMapping("/schedule/{idSchedule}")
-    public List<Assistance> getAssistancesBySchedule(@PathVariable String idSchedule) {
-        return assistanceServ.getAssistancesBySchedule(idSchedule);
-    }
-
-    @GetMapping("/user/{userId}")
-    public List<Assistance> getAssistancesByUser(@PathVariable int userId) {
-        return assistanceServ.getAssistancesByUser(userId);
+    @GetMapping("/find/user")
+    public List<Assistance> findAssistancesByUser(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
+        Activity requestedActivity = new Activity();
+        requestedActivity.setActivityType(assistanceRequest.getActivityType());
+        requestedActivity.setYear(assistanceRequest.getYear());
+        requestedActivity.setSemester(assistanceRequest.getSemester());
+        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
+        List<String> schedules = requiredActivity.getSchedules();
+        return assistanceServ.getAssistancesByUser(assistanceRequest, schedules);
     }
 
-    @GetMapping("/role/{userRol}")
-    public List<Assistance> getAssistancesByUserRol(@PathVariable String userRol) {
-        return assistanceServ.getAssistancesByUserRol(userRol);
+    @PutMapping("update/confirm")
+    public void updateConfirmationForAssistance(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
+        Activity requestedActivity = new Activity();
+        requestedActivity.setActivityType(assistanceRequest.getActivityType());
+        requestedActivity.setYear(assistanceRequest.getYear());
+        requestedActivity.setSemester(assistanceRequest.getSemester());
+        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
+        List<String> schedules = requiredActivity.getSchedules();
+        for(String schedule : schedules){
+            Schedule actSchedule = scheduleRep.getScheduleById(schedule);
+            if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
+                assistanceServ.updateConfirmationForAssitance(assistanceRequest);
+            }
+        }
     }
-    // refactorizar
-    @DeleteMapping("/{id}")
-    public void deleteAssistance(@PathVariable String id) {
-        assistanceServ.deleteAssistance(id);
+    @DeleteMapping("/delete")
+    public void deleteAssistanceForUser(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
+        Activity requestedActivity = new Activity();
+        requestedActivity.setActivityType(assistanceRequest.getActivityType());
+        requestedActivity.setYear(assistanceRequest.getYear());
+        requestedActivity.setSemester(assistanceRequest.getSemester());
+        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
+        List<String> schedules = requiredActivity.getSchedules();
+        for(String schedule : schedules){
+            Schedule actSchedule = scheduleRep.getScheduleById(schedule);
+            if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
+                assistanceServ.deleteAssistanceForUser(assistanceRequest);
+            }
+        }
+
     }
-    // refactorizar
-    @PutMapping("/confirm-all/{idSchedule}")
-    public int confirmAllAssistancesForSchedule(@PathVariable String idSchedule) {
-        return assistanceServ.confirmAllAssistancesForSchedule(idSchedule);
-    }
-    // refactorizar
-    @GetMapping("/confirmed/{idSchedule}")
-    public List<Assistance> getConfirmedAssistancesBySchedule(@PathVariable String idSchedule) {
-        return assistanceServ.getConfirmedAssistancesBySchedule(idSchedule);
-    }
-    // refactorizar
-    @GetMapping("/check/{userId}/{idSchedule}")
-    public boolean hasUserAttendedSchedule(@PathVariable int userId, @PathVariable String idSchedule) {
-        return assistanceServ.hasUserAttendedSchedule(userId, idSchedule);
-    }
+
+
+//
+//    @GetMapping("/historial")
+//    public List<Assistance> getAllAssistances() {
+//        return assistanceServ.getAllAssistances();
+//    }
+//
+//    // refactorizar
+//    @PutMapping("/confirmation/{id}")
+//    public void updateAssistanceConfirmation(@PathVariable String id, @RequestBody boolean confirmation) {
+//        assistanceServ.updateAssistanceConfirmation(id, confirmation);
+//    }
+//    // refactorizar
+//    @GetMapping("/schedule/{idSchedule}")
+//    public List<Assistance> getAssistancesBySchedule(@PathVariable String idSchedule) {
+//        return assistanceServ.getAssistancesBySchedule(idSchedule);
+//    }
+//
+//    @GetMapping("/user/{userId}")
+//    public List<Assistance> getAssistancesByUser(@PathVariable int userId) {
+//        return assistanceServ.getAssistancesByUser(userId);
+//    }
+//
+//    @GetMapping("/role/{userRol}")
+//    public List<Assistance> getAssistancesByUserRol(@PathVariable String userRol) {
+//        return assistanceServ.getAssistancesByUserRol(userRol);
+//    }
+//    // refactorizar
+//    @DeleteMapping("/{id}")
+//    public void deleteAssistance(@PathVariable String id) {
+//        assistanceServ.deleteAssistance(id);
+//    }
+//    // refactorizar
+//    @PutMapping("/confirm-all/{idSchedule}")
+//    public int confirmAllAssistancesForSchedule(@PathVariable String idSchedule) {
+//        return assistanceServ.confirmAllAssistancesForSchedule(idSchedule);
+//    }
+//    // refactorizar
+//    @GetMapping("/confirmed/{idSchedule}")
+//    public List<Assistance> getConfirmedAssistancesBySchedule(@PathVariable String idSchedule) {
+//        return assistanceServ.getConfirmedAssistancesBySchedule(idSchedule);
+//    }
+//    // refactorizar
+//    @GetMapping("/check/{userId}/{idSchedule}")
+//    public boolean hasUserAttendedSchedule(@PathVariable int userId, @PathVariable String idSchedule) {
+//        return assistanceServ.hasUserAttendedSchedule(userId, idSchedule);
+//    }
 }

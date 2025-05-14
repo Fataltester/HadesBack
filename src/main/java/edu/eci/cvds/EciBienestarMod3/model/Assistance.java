@@ -33,4 +33,8 @@ public class Assistance {
         this.idSchedule = idSchedule;
     }
 
+    public boolean getConfirmation(){
+        return confirmation;
+    }
+
 }

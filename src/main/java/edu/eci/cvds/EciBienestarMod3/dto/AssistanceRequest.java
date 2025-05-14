@@ -11,16 +11,22 @@ import java.util.List;
 @Getter
 @Setter
 public class AssistanceRequest {
-    private int idUsuario;
-    private String nombreUsuario;
-    private String rolUsuario;
-    private int numberDay;
-    private LocalTime startHour;
+    // ASSISTANCE DATA
+    private int idUser;
+    private String userName;
+    private String rolUser;
+    private boolean confirmation;
+
+    //DATA FOR SEARCH THE ACTIVITY
+    private String activityType;
     private int year;
     private int semester;
-    private DayOfWeek dayOfWeek;
-    private boolean confirmation;
+
+    //DATA FOR SEARCH THE SCHEDULE
     private Month month;
+    private int numberDay;
+
+
 
     public boolean getConfirmation() {
         return confirmation;

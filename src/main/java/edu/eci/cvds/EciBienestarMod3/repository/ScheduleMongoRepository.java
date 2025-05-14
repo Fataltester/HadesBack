@@ -16,5 +16,6 @@ public interface ScheduleMongoRepository extends MongoRepository<Schedule,String
     //Buscar por varios estados especificos
     List<Schedule> findByStateIn(List<ScheduleState> states);
 
-    Schedule getScheduleBy(String schedule);
+
+    Schedule getScheduleById(String schedule);
 }

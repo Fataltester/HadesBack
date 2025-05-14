@@ -1,13 +1,10 @@
 package edu.eci.cvds.EciBienestarMod3.repository;
 
-import edu.eci.cvds.EciBienestarMod3.model.Activity;
 import edu.eci.cvds.EciBienestarMod3.model.Assistance;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -36,4 +33,19 @@ public interface AssistanceMongoRepository extends MongoRepository<Assistance, S
 
     @Query("{ 'userName' : ?0, 'userRol' : ?1, 'idSchedule' : ?2}")
     Assistance getAssistanceByGeneralSchedules(String userName, String userRol, String idSchedule);
+
+    @Query("{ " +
+            "'userId': { $gte: ?0 }, " +
+            "'userName': { $regex: ?1, $options: 'i' }, " +
+            "'userRol': { $regex: ?2, $options: 'i' }, " +
+            "'confirmation': ?3 " +
+            "}")
+    List<Assistance> findAssistanceByOptions(int userId, String userName, String userRol, boolean confirmation);
+
+
+    Assistance findAssistanceByUserId(int userId);
+
+    Assistance getAssistanceById(String id);
+
+    Assistance getAssistanceByUserId(int userId);
 }
