@@ -41,7 +41,7 @@ public class ScheduleService {
         return scheduleRepository.findById(id).orElse(null);
     }
 
-    public List<String> createScheduleBetweenTwoDates(int semester, String activityId, DayOfWeek dayOfWeek){
+    public List<String> createScheduleBetweenTwoDates(int semester, String activityId, DayOfWeek dayOfWeeks){
         LocalDate startDate;
         LocalDate endDate;
         if(semester == 1){
@@ -52,9 +52,8 @@ public class ScheduleService {
             endDate = LocalDate.of(2025, 11, 30);
         }
         List<String> schedules = new ArrayList<>();
-
-        List<LocalDate> fechas = getDatesForWeekday(startDate,endDate,dayOfWeek);
-        for(LocalDate fecha: fechas){
+        List<LocalDate> fechas = getDatesForWeekday(startDate, endDate, dayOfWeeks);
+        for (LocalDate fecha : fechas) {
             Schedule schedule = new Schedule();
             schedule.setNumberDay(fecha.getDayOfMonth());
             schedule.setMonth(fecha.getMonth());
@@ -65,7 +64,6 @@ public class ScheduleService {
         }
         return schedules;
     }
-
 
     public Schedule deleteSchedule(Schedule schedule){
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(schedule.getId());
