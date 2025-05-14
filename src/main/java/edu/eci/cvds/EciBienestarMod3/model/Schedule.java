@@ -31,4 +31,10 @@ public class Schedule {
     private Integer capacityCurrent = 0;
     private List<Integer> assistances = new ArrayList<>();
 
+    public void addAssistance(Integer idUser){
+        assistances.add(idUser);
+    }
+
 }
+
+
