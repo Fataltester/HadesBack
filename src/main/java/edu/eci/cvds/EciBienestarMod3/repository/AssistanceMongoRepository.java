@@ -40,7 +40,7 @@ public interface AssistanceMongoRepository extends MongoRepository<Assistance, S
             "'userRol': { $regex: ?2, $options: 'i' }, " +
             "'confirmation': ?3 " +
             "}")
-    List<Assistance> findAssistanceByOptions(int userId, String userName, String userRol, boolean confirmation);
+    List<Assistance> findAssistanceByOptions(int userId, String userName, String userRol, Boolean confirmation);
 
 
     Assistance findAssistanceByUserId(int userId);
@@ -48,4 +48,6 @@ public interface AssistanceMongoRepository extends MongoRepository<Assistance, S
     Assistance getAssistanceById(String id);
 
     Assistance getAssistanceByUserId(int userId);
+
+    Assistance getAssistanceByUserName(String userName);
 }

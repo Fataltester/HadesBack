@@ -15,7 +15,7 @@ public class AssistanceRequest {
     private int idUser;
     private String userName;
     private String rolUser;
-    private boolean confirmation;
+    private Boolean confirmation;
 
     //DATA FOR SEARCH THE ACTIVITY
     private String activityType;
@@ -26,9 +26,4 @@ public class AssistanceRequest {
     private Month month;
     private int numberDay;
 
-
-
-    public boolean getConfirmation() {
-        return confirmation;
-    }
 }

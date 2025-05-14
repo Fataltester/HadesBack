@@ -39,12 +39,12 @@ public class AssistanceService {
         int userId = assistanceRequest.getIdUser();
         String userName = assistanceRequest.getUserName();
         String userRol = assistanceRequest.getRolUser();
-        boolean confirmation = assistanceRequest.getConfirmation();
+        Boolean confirmation = assistanceRequest.getConfirmation();
         return assistanceRepo.findAssistanceByOptions(
                 userId != 0 ? userId : 0, // 0 es no valida
                 userName != null ? userName : ".*",
                 userRol != null ? userRol : ".*",
-                confirmation
+                confirmation != null ? confirmation: true
         );
     }
 
@@ -63,7 +63,7 @@ public class AssistanceService {
     }
 
     public void updateConfirmationForAssitance(AssistanceRequest assistanceRequest){
-        Assistance currentAssistance = assistanceRepo.getAssistanceByUserId(assistanceRequest.getIdUser());
+        Assistance currentAssistance = assistanceRepo.getAssistanceByUserName(assistanceRequest.getUserName());
         if(currentAssistance.getConfirmation() != assistanceRequest.getConfirmation()){
             currentAssistance.setConfirmation(assistanceRequest.getConfirmation());
             assistanceRepo.save(currentAssistance);
@@ -71,7 +71,7 @@ public class AssistanceService {
     }
 
     public void deleteAssistanceForUser(AssistanceRequest assistanceRequest){
-        assistanceRepo.delete(assistanceRepo.getAssistanceByUserId(assistanceRequest.getIdUser()));
+        assistanceRepo.delete(assistanceRepo.getAssistanceByUserName(assistanceRequest.getUserName()));
     }
 
 

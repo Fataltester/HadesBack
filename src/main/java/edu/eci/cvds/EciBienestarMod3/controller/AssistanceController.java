@@ -75,16 +75,16 @@ public class AssistanceController {
         throw new EciBienestarException(EciBienestarException.TYPE_NOT_FOUND);
     }
 
-    @GetMapping("/find/user")
-    public List<Assistance> findAssistancesByUser(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
-        Activity requestedActivity = new Activity();
-        requestedActivity.setActivityType(assistanceRequest.getActivityType());
-        requestedActivity.setYear(assistanceRequest.getYear());
-        requestedActivity.setSemester(assistanceRequest.getSemester());
-        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
-        List<String> schedules = requiredActivity.getSchedules();
-        return assistanceServ.getAssistancesByUser(assistanceRequest, schedules);
-    }
+//    @GetMapping("/find/user")
+//    public List<Assistance> findAssistancesByUser(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
+//        Activity requestedActivity = new Activity();
+//        requestedActivity.setActivityType(assistanceRequest.getActivityType());
+//        requestedActivity.setYear(assistanceRequest.getYear());
+//        requestedActivity.setSemester(assistanceRequest.getSemester());
+//        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
+//        List<String> schedules = requiredActivity.getSchedules();
+//        return assistanceServ.getAssistancesByUser(assistanceRequest, schedules);
+//    }
 
     @PutMapping("update/confirm")
     public void updateConfirmationForAssistance(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {

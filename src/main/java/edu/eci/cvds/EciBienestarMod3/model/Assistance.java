@@ -15,7 +15,7 @@ public class Assistance {
     @Id
     private String id;
 
-    private boolean confirmation;  // Confirmación de asistencia
+    private Boolean confirmation;  // Confirmación de asistencia
     private String userName;       // Nombre completo del usuario
     private int userId;            // ID del usuario
     private String userRol;        // Rol del usuario (Estudiante, Docente, etc.)
