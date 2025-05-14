@@ -15,12 +15,7 @@ public interface ActivityMongoRepository extends MongoRepository<Activity, Strin
     @Query("{ 'activityType' : ?0, 'year' : ?1, 'semester' : ?2 }")
     Activity getActivityByGeneralSchedules(String activityType, int year, int semester);
 
-    @Query("{'year' : ?0, 'semester' : ?1, 'teacher' : ?2, 'activityType' : ?3 }")
+    @Query("{'year': ?0, 'semester': ?1, 'teacher': { $regex: ?2, $options:  'i' }, 'activityType': { $regex: ?3, $options:  'i' } }")
     List<Activity> findActivityByOptions(int year, int semester, String teacher , String activityType);
-
-    List<Activity> findActivityByYear(int year);
-    List<Activity> findActivityBySemester(int semester);
-    List<Activity> findActivityByTeacher(String teacher);
-    List<Activity> findActivityByActivityType(String activityType);
 
 }

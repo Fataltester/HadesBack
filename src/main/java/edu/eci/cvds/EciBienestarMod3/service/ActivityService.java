@@ -7,6 +7,7 @@ import edu.eci.cvds.EciBienestarMod3.repository.ActivityMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,19 +33,24 @@ public class ActivityService {
     }
 
     public List<Activity> getActivitiesByOptions(ActivityOptionalRequest actReq) {
-        if (actReq.getYear() != 0) {
-            return activityRepo.findActivityByYear(actReq.getYear());
+        LocalDate today = LocalDate.now();
+        int month = today.getMonthValue();
+        int semester = (month <= 6) ? 1 : 2;
+        int year = today.getYear();
+        if (actReq.getYear() == 0){
+            actReq.setYear(year);
         }
-        if (actReq.getSemester() != 0) {
-            return activityRepo.findActivityBySemester(actReq.getSemester());
+        if (actReq.getSemester() == 0){
+            actReq.setSemester(semester);
         }
-        if (actReq.getTeacherName() != null) {
-            return activityRepo.findActivityByTeacher(actReq.getTeacherName());
+        if (actReq.getActivityType() == null){
+            actReq.setActivityType("");
         }
-        if (actReq.getActivityType() != null) {
-            return activityRepo.findActivityByActivityType(actReq.getActivityType());
+        if (actReq.getTeacherName() == null){
+            actReq.setTeacherName("");
         }
-        return new ArrayList<>();
+        return activityRepo.findActivityByOptions(actReq.getYear(),
+                actReq.getSemester(), actReq.getTeacherName(), actReq.getActivityType());
     }
 
     public void updateActivityByOptions(Activity activity, ActivityOptionalRequest activityOptionalRequest) throws EciBienestarException {
