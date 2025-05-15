@@ -35,40 +35,65 @@ public class AssistanceService {
         return assistanceRepo.save(assistance1);
     }
 
-    public List<Assistance> getAssistanceByOptions(AssistanceRequest assistanceRequest){
+    public Assistance studentCreateAssistance(String schedule, AssistanceRequest assistance) {
+        Assistance assistance1 = new Assistance();
+        assistance1.setIdSchedule(schedule);
+        assistance1.setUserId(assistance.getIdUser());
+        assistance1.setUserName(assistance.getUserName());
+        assistance1.setUserRol(assistance.getRolUser());
+        assistance1.setConfirmation(false);
+        return assistanceRepo.save(assistance1);
+    }
+
+    public List<Assistance> getAssistanceByOptions(AssistanceRequest assistanceRequest, String schedule){
         int userId = assistanceRequest.getIdUser();
         String userName = assistanceRequest.getUserName();
         String userRol = assistanceRequest.getRolUser();
         Boolean confirmation = assistanceRequest.getConfirmation();
-        return assistanceRepo.findAssistanceByOptions(
-                userId != 0 ? userId : 0, // 0 es no valida
-                userName != null ? userName : ".*",
-                userRol != null ? userRol : ".*",
-                confirmation != null ? confirmation: true
-        );
-    }
-
-    public List<Assistance> getAssistancesByUser(AssistanceRequest assistanceRequest, List<String> schedules){
+        List<Assistance> filteredAssistances;
+        if (confirmation != null) {
+            filteredAssistances = assistanceRepo.findAssistanceByOptions(
+                    userId != 0 ? userId : 0,
+                    userName != null ? userName : ".*",
+                    userRol != null ? userRol : ".*",
+                    confirmation
+            );
+        } else {
+            filteredAssistances = assistanceRepo.findAssistanceWithoutConfirmation(
+                    userId != 0 ? userId : 0,
+                    userName != null ? userName : ".*",
+                    userRol != null ? userRol : ".*"
+            );
+        }
         List<Assistance> totalAssistances = new ArrayList<>();
-        for(String schedule : schedules){
-            Schedule actSchedule = scheduleRepo.getScheduleById(schedule);
-            List<Integer> actassistance = actSchedule.getAssistances();
-            for(Integer assistance : actassistance){
-                if(assistance == assistanceRequest.getIdUser()){
-                    totalAssistances.add(assistanceRepo.findAssistanceByUserId(assistance));
-                }
+        for (Assistance filteredAssistance : filteredAssistances){
+            if(filteredAssistance.getIdSchedule().equals(schedule)){
+                totalAssistances.add(filteredAssistance);
             }
         }
         return totalAssistances;
     }
 
-    public void updateConfirmationForAssitance(AssistanceRequest assistanceRequest){
-        Assistance currentAssistance = assistanceRepo.getAssistanceByUserName(assistanceRequest.getUserName());
-        if(currentAssistance.getConfirmation() != assistanceRequest.getConfirmation()){
-            currentAssistance.setConfirmation(assistanceRequest.getConfirmation());
-            assistanceRepo.save(currentAssistance);
+    public void updateConfirmationForAssitance(AssistanceRequest assistanceRequest, Schedule schedule){
+        List<Integer> assistances = schedule.getAssistances();
+        for(Integer assistanceId : assistances){
+            if(assistanceId == assistanceRequest.getIdUser()){
+                Assistance requiredAssistance = assistanceRepo.getAssistanceByUserId(assistanceId);
+                requiredAssistance.setConfirmation(true);
+                assistanceRepo.save(requiredAssistance);
+            }
         }
     }
+
+    public void confirmAllAssistances(AssistanceRequest assistanceRequest, Schedule schedule){
+        List<Integer> assistances = schedule.getAssistances();
+        for(Integer assistanceId : assistances){
+            Assistance requiredAssistance = assistanceRepo.getAssistanceByUserId(assistanceId);
+            requiredAssistance.setConfirmation(true);
+            assistanceRepo.save(requiredAssistance);
+            }
+    }
+
 
     public void deleteAssistanceForUser(AssistanceRequest assistanceRequest){
         assistanceRepo.delete(assistanceRepo.getAssistanceByUserName(assistanceRequest.getUserName()));
