@@ -2,7 +2,7 @@ name: Deploy App to Azure to Main - ECIBIENESTAR
 on:
   push:
     branches:
-      - featureCICD
+      - main
   pull_request:
     branches:
       - main
