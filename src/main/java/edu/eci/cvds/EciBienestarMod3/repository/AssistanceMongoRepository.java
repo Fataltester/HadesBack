@@ -50,4 +50,7 @@ public interface AssistanceMongoRepository extends MongoRepository<Assistance, S
     Assistance getAssistanceByUserId(int userId);
 
     Assistance getAssistanceByUserName(String userName);
+
+    @Query("{ 'userId': { $gte: ?0 }, 'userName': { $regex: ?1, $options: 'i' }, 'userRol': { $regex: ?2, $options: 'i' } }")
+    List<Assistance> findAssistanceWithoutConfirmation(Integer userId, String userName, String userRol);
 }

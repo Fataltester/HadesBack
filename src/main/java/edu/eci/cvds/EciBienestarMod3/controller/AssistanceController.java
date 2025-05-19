@@ -58,6 +58,41 @@ public class AssistanceController {
         throw new EciBienestarException(EciBienestarException.TYPE_NOT_FOUND);
     }
 
+    @PostMapping("/newAssistance/student")
+    public Assistance studentCreateAssistance(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
+        Activity requestedActivity = new Activity();
+        requestedActivity.setActivityType(assistanceRequest.getActivityType());
+        requestedActivity.setYear(assistanceRequest.getYear());
+        requestedActivity.setSemester(assistanceRequest.getSemester());
+        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
+        List<String> schedules = requiredActivity.getSchedules();
+        for(String schedule : schedules){
+            Schedule actSchedule = scheduleRep.getScheduleById(schedule);
+            if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
+                actSchedule.addAssistance(assistanceRequest.getIdUser());
+                scheduleRep.save(actSchedule);
+                return assistanceServ.studentCreateAssistance(schedule,assistanceRequest);
+            }
+        }
+        throw new EciBienestarException(EciBienestarException.TYPE_NOT_FOUND);
+    }
+
+    @PutMapping("confirm/all")
+    public void confirmAllAssistances(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
+        Activity requestedActivity = new Activity();
+        requestedActivity.setActivityType(assistanceRequest.getActivityType());
+        requestedActivity.setYear(assistanceRequest.getYear());
+        requestedActivity.setSemester(assistanceRequest.getSemester());
+        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
+        List<String> schedules = requiredActivity.getSchedules();
+        for(String schedule : schedules){
+            Schedule actSchedule = scheduleRep.getScheduleById(schedule);
+            if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
+                assistanceServ.confirmAllAssistances(assistanceRequest, actSchedule);
+            }
+        }
+    }
+
     @GetMapping("/find/options")
     public List<Assistance> findAssistanceByOptions(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
         Activity requestedActivity = new Activity();
@@ -69,22 +104,11 @@ public class AssistanceController {
         for(String schedule : schedules){
             Schedule actSchedule = scheduleRep.getScheduleById(schedule);
             if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
-                return assistanceServ.getAssistanceByOptions(assistanceRequest);
+                return assistanceServ.getAssistanceByOptions(assistanceRequest,schedule);
             }
         }
         throw new EciBienestarException(EciBienestarException.TYPE_NOT_FOUND);
     }
-
-//    @GetMapping("/find/user")
-//    public List<Assistance> findAssistancesByUser(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
-//        Activity requestedActivity = new Activity();
-//        requestedActivity.setActivityType(assistanceRequest.getActivityType());
-//        requestedActivity.setYear(assistanceRequest.getYear());
-//        requestedActivity.setSemester(assistanceRequest.getSemester());
-//        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
-//        List<String> schedules = requiredActivity.getSchedules();
-//        return assistanceServ.getAssistancesByUser(assistanceRequest, schedules);
-//    }
 
     @PutMapping("update/confirm")
     public void updateConfirmationForAssistance(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
@@ -97,10 +121,11 @@ public class AssistanceController {
         for(String schedule : schedules){
             Schedule actSchedule = scheduleRep.getScheduleById(schedule);
             if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
-                assistanceServ.updateConfirmationForAssitance(assistanceRequest);
+                assistanceServ.updateConfirmationForAssitance(assistanceRequest, actSchedule);
             }
         }
     }
+
     @DeleteMapping("/delete")
     public void deleteAssistanceForUser(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
         Activity requestedActivity = new Activity();
@@ -112,6 +137,8 @@ public class AssistanceController {
         for(String schedule : schedules){
             Schedule actSchedule = scheduleRep.getScheduleById(schedule);
             if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
+                actSchedule.deleteAssistance(assistanceRequest.getIdUser());
+                scheduleRep.save(actSchedule);
                 assistanceServ.deleteAssistanceForUser(assistanceRequest);
             }
         }

@@ -35,6 +35,10 @@ public class Schedule {
         assistances.add(idUser);
     }
 
+    public void deleteAssistance(Integer idUser){
+        assistances.remove(idUser);
+    }
+
 }
 
 
