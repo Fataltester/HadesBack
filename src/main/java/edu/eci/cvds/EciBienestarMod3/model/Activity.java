@@ -1,33 +1,40 @@
 package edu.eci.cvds.EciBienestarMod3.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-import java.time.DayOfWeek;
-import java.time.LocalTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.data.annotation.Id;
 
+@Setter
+@Getter
 @Document(collection = "Activity")
+@NoArgsConstructor
 public class Activity {
 
     @Id
     private String id;
 
-    private LocalTime startHour;
-    private LocalTime endHour;
-    private DayOfWeek dayWeek;
+    //ID of every activity
     private int year;
     private int semester;
+    private String activityType;
 
+    //teacher information
     private String teacher;
     private int teacherId;
-    private String activityType;
+
+    //class information
     private String location;
     private int capacityMaximum;
 
-    private List<String> schedules = new ArrayList<>();
-    private List<Resource> resources = new ArrayList<>();
+    private List<String> schedules = new ArrayList<>(); //weekly schedule of each activity
+    private List<EveryDay> days = new ArrayList<>(); //day and time per week
+    private List<Resource> resources = new ArrayList<>(); //resources of class
 
     private static List<String> types = new ArrayList<>();
     static {
@@ -35,77 +42,6 @@ public class Activity {
                 "Fotografia", "Futbol Femenino", "Futbol Masculino", "Futbol Administrativos", "Futsal Femenino",
                 "Futsal Masculino", "Guitarra", "Juegos Escenicos", "Pilates", "Rumba", "Teatro", "Tecnica Vocal",
                 "Vitrales", "Voleybol Femenino y Masculino", "Taekwondo", "Tenis de Campo", "Tenis de mesa", "Yoga"));
-    }
-
-    public Activity(){}
-
-    //GETTERS
-
-    public String getId() {
-        return id;
-    }
-
-    public String getTeacher() {
-        return teacher;
-    }
-
-    public String getActivityType() {
-        return activityType;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public LocalTime getStartHour() {
-        return startHour;
-    }
-
-    public LocalTime getEndHour() {
-        return endHour;
-    }
-
-    public DayOfWeek getDayWeek() {
-        return dayWeek;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public int getSemester() {
-        return semester;
-    }
-
-    public static List<String> getTypes() {
-        return new ArrayList<>(types);
-    }
-
-    public List<Resource> getResources() {
-        return resources;
-    }
-
-    public List<String> getSchedules() {
-        return schedules;
-    }
-
-    public int getTeacherId() {
-        return teacherId;
-    }
-
-    public int getCapacityMaximum() {
-        return capacityMaximum;
-    }
-
-    //SETTERS
-
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
     }
 
     public void setActivityType(String activityType) throws EciBienestarException {
@@ -116,44 +52,21 @@ public class Activity {
         }
     }
 
-    public void setStartHour(LocalTime startHour) {
-        this.startHour = startHour;
+    public void setSemester(){
+        LocalDate today = LocalDate.now();
+        int month = today.getMonthValue();
+        int semester = (month <= 6) ? 1 : 2;
+        this.semester = semester;
     }
 
-    public void setEndHour(LocalTime endHour) {
-        this.endHour = endHour;
-    }
-
-    public void setDayWeek(DayOfWeek dayWeek) {
-        this.dayWeek = dayWeek;
-    }
-
-    public void setYear(int year) {
+    public void setYear(){
+        LocalDate today = LocalDate.now();
+        int year = today.getYear();
         this.year = year;
     }
 
-    public void setSemester(int semester) throws EciBienestarException {
-        if (semester == 1 || semester == 2) {
-            this.semester = semester;
-        }else {
-            throw new EciBienestarException(EciBienestarException.SEMESTER_LONGER_THAN_REQUIRED);
-        }
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setResources(List<Resource> resources) {
-        this.resources = resources;
-    }
-
-    public void setTeacherId(int teacherId) {
-        this.teacherId = teacherId;
-    }
-
     public void setCapacityMaximum(int capacityMaximum) throws EciBienestarException {
-        if (capacityMaximum > 0) {
+        if (capacityMaximum > 0 && capacityMaximum < 100) {
             this.capacityMaximum = capacityMaximum;
         }else {
             throw new EciBienestarException(EciBienestarException.MAXIMUM_CAPACITY_NOT_POSSIBLE);
@@ -183,4 +96,13 @@ public class Activity {
     public static void removeType(String type) {
         types.remove(type);
     }
+
+    public void addDays(EveryDay days) {
+        this.days.add(days);
+    }
+
+    public void removeDays(EveryDay days) {
+        this.days.remove(days);
+    }
+
 }

@@ -39,10 +39,14 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             jwtService.validateToken(token);
 
+            String id = JWT.decode(token).getClaim("id").asString();
             String userName = JWT.decode(token).getClaim("userName").asString();
+            String email = JWT.decode(token).getClaim("email").asString();
+            String name = JWT.decode(token).getClaim("name").asString();
             String role = JWT.decode(token).getClaim("role").asString();
+            String specialty= JWT.decode(token).getClaim("specialty").asString();
 
-            JWTUser user = new JWTUser(userName, role);
+            JWTUser user = new JWTUser(id,userName,email,name,role,specialty);
 
             var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
             var authToken = new UsernamePasswordAuthenticationToken(user, null, authorities);

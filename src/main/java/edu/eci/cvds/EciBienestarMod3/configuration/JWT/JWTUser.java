@@ -1,18 +1,16 @@
 package edu.eci.cvds.EciBienestarMod3.configuration.JWT;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
+@AllArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class JWTUser {
+    private final String id;
     private final String userName;
+    private final String email;
+    private final String name;
     private final String rol;
-
-    public JWTUser(String userName, String rol){
-        this.userName = userName;
-        this.rol = rol;
-    }
+    private final String speciality;
 }
