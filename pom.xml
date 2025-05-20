@@ -128,6 +128,12 @@
 			<version>2.8.6</version> <!-- Puedes usar la última versión estable disponible -->
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 	</dependencies>
 	<repositories>
 		<repository>
@@ -201,6 +207,7 @@
 								<exclude>edu/eci/cvds/EciBienestarMod3/EciBienestarMod3.*</exclude>
 								<exclude>edu/eci/cvds/EciBienestarMod3/security/**</exclude>
 								<exclude>edu/eci/cvds/EciBienestarMod3/config/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/notifications/**</exclude>
 							</excludes>
 						</configuration>
 					</execution>
