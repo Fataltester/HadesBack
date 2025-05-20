@@ -64,4 +64,4 @@ jobs:
         with:
           app-name: 'Hades-BackMain'
           publish-profile: ${{ secrets.AZUREWEBAPPPUBLISHPROFILEMAIN }}
-          package: '*.jar'
+          package: java-app/*.jar
