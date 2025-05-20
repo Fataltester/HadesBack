@@ -8,19 +8,23 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Setter
+/**
+ * DTO for receiving optional parameters for activity creation or update.
+ */
 @Getter
+@Setter
 @NoArgsConstructor
 public class ActivityOptionalRequest {
+
     //for getter
-    private int year;
-    private int semester;
-    private String activityType;
+    private int year; // Activity year
+    private int semester; // Academic semester (1 or 2)
+    private String activityType; // Type of the activity
 
     //for update
-    private String teacherName;
-    private int teacherId;
-    private List<EveryDay> days;
-    private String newActivity;
-    private List<Resource> resources;
+    private String teacherName;// Full name of the teacher in charge
+    private int teacherId;// Unique ID of the teacher
+    private List<EveryDay> days;// Weekly days and times when the activity occurs
+    private String newActivity;// New name or type of the activity for update
+    private List<Resource> resources;// List of resources needed for the activity
 }
