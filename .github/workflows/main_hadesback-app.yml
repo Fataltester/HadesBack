@@ -58,10 +58,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: java-app
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'Hades-BackMain'
           publish-profile: ${{ secrets.AZUREWEBAPPPUBLISHPROFILEMAIN }}
-          package: java-app/*.jar
+          package: './java-app/*.jar'
