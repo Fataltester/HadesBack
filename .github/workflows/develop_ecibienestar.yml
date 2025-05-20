@@ -73,6 +73,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'HadesBack-app'
-          slot-name: 'Production'
+          slot-name: 'Test'
           publish-profile: ${{ secrets.AZUREWEBAPPPUBLISHPROFILE }}
           package: '*.jar'
