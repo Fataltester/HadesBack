@@ -28,7 +28,7 @@ public class Activity {
     private int year;
     private int semester;
 
-    // Activity type (must be in the allowed list)
+    // Activity type
     private String activityType;
 
     // Teacher information
