@@ -12,6 +12,7 @@ public class EciBienestarException  extends Exception{
             "The difference between startHour and endHour cannot be greater than 6 hours.";
     public static final String STARTHOUR_BEFORE_SEVEN = "startHour can not be before 07:00 AM";
     public static final String STARTHOUR_AFTER_SEVEN = "EndHour can not be after 07:00 PM";
+    public static final String EMAIL_NOT_FOUND = "Can not send an email, address or ";
 
     public EciBienestarException(String message){
         super(message);

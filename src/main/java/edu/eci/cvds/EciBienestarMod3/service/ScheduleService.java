@@ -1,7 +1,11 @@
 package edu.eci.cvds.EciBienestarMod3.service;
 
+import edu.eci.cvds.EciBienestarMod3.model.Assistance;
 import edu.eci.cvds.EciBienestarMod3.model.Schedule;
 import edu.eci.cvds.EciBienestarMod3.model.enumeration.ScheduleState;
+import edu.eci.cvds.EciBienestarMod3.notifications.IEmailService;
+import edu.eci.cvds.EciBienestarMod3.repository.ActivityMongoRepository;
+import edu.eci.cvds.EciBienestarMod3.repository.AssistanceMongoRepository;
 import edu.eci.cvds.EciBienestarMod3.repository.ScheduleMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,13 +27,17 @@ public class ScheduleService {
     @Autowired
     ScheduleMongoRepository scheduleRepository;
 
-    /**
-     * Creates a new schedule if it does not already exist in the repository.
-     *
-     * @param schedule The schedule to be created.
-     * @return The saved Schedule object, or null if the schedule already exists.
-     */
-    Schedule createSchedule(Schedule schedule) {
+    @Autowired
+    AssistanceMongoRepository assistanceRepository;
+
+    @Autowired
+    ActivityMongoRepository activityRepository;
+
+    @Autowired
+    IEmailService emailService;
+
+    Schedule createSchedule(Schedule schedule){
+        //Genero un id aleatorio
         if (schedule.getId() == null) {
             schedule.setId(UUID.randomUUID().toString());
         }
@@ -137,6 +145,9 @@ public class ScheduleService {
         if (scheduleOptional.isPresent()) {
             Schedule schedule = scheduleOptional.get();
             schedule.setState(newState);
+            if(newState == ScheduleState.CANCELADA) {
+                notificateAllAssistancesForCancelation(schedule);
+            }
             return scheduleRepository.save(schedule);
         } else {
             return null;
@@ -184,5 +195,21 @@ public class ScheduleService {
             current = current.plusWeeks(1);
         }
         return dates;
+    }
+
+    private void notificateAllAssistancesForCancelation(Schedule schedule){
+        List<Integer> assistances = schedule.getAssistances();
+        for(Integer idAssistance : assistances){
+            Assistance currentAssistance = assistanceRepository.getAssistanceByUserId(idAssistance);
+            String userEmail = currentAssistance.getUserEmail();
+            String subject = "Cancelación de Actividad";
+            String message = String.format(
+                    "Hola, tu asistencia al evento del %d de %s de %d ha sido confirmada.",
+                    schedule.getNumberDay(),
+                    schedule.getMonth(),
+                    schedule.getYear()
+            );
+            emailService.sendEmail(new String[]{userEmail}, subject, message);
+        }
     }
 }
