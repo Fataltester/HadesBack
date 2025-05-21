@@ -6,10 +6,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for testing authentication via JWT.
+ */
 @RestController
 @RequestMapping("/api/prueba")
 public class TestController {
 
+    /**
+     * Test endpoint that returns the authenticated user's JWT information.
+     *
+     * @return the {@link JWTUser} extracted from the JWT token
+     */
     @GetMapping("/token")
     public JWTUser prueba() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
