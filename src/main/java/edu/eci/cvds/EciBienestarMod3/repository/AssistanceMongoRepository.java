@@ -92,4 +92,15 @@ public interface AssistanceMongoRepository extends MongoRepository<Assistance, S
      * Retrieves an assistance record by user name.
      */
     Assistance getAssistanceByUserName(String userName);
+
+    /**
+     * Finds assistance records without filtering by confirmation status.
+     *
+     * @param userId   The user ID (0 to ignore).
+     * @param userName Regex for user name.
+     * @param userRol  Regex for user role.
+     * @return A list of Assistance documents.
+     */
+    @Query("{ 'userId': { $gte: ?0 }, 'userName': { $regex: ?1, $options: 'i' }, 'userRol': { $regex: ?2, $options: 'i' } }")
+    List<Assistance> findAssistanceWithoutConfirmation(Integer userId, String userName, String userRol);
 }

@@ -68,6 +68,56 @@ public class AssistanceController {
     }
 
     /**
+     * Create a new assistance record for a student user on a specific activity schedule.
+     * This is similar to createAssistance, but invokes a different service method intended for students.
+     *
+     * @param assistanceRequest Information about the student and the target schedule.
+     * @return Created assistance record.
+     * @throws EciBienestarException if no matching schedule is found.
+     */
+    @PostMapping("/newAssistance/student")
+    public Assistance studentCreateAssistance(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
+        Activity requestedActivity = new Activity();
+        requestedActivity.setActivityType(assistanceRequest.getActivityType());
+        requestedActivity.setYear(assistanceRequest.getYear());
+        requestedActivity.setSemester(assistanceRequest.getSemester());
+        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
+        List<String> schedules = requiredActivity.getSchedules();
+        for(String schedule : schedules){
+            Schedule actSchedule = scheduleRep.getScheduleById(schedule);
+            if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
+                actSchedule.addAssistance(assistanceRequest.getIdUser());
+                scheduleRep.save(actSchedule);
+                return assistanceServ.studentCreateAssistance(schedule,assistanceRequest);
+            }
+        }
+        throw new EciBienestarException(EciBienestarException.TYPE_NOT_FOUND);
+    }
+
+    /**
+     * Confirm all assistance records for a specific schedule that matches the given request.
+     * Typically used by administrators to confirm all attendees in bulk.
+     *
+     * @param assistanceRequest Request object containing activity, date, and user data.
+     * @throws EciBienestarException if no matching schedule is found.
+     */
+    @PutMapping("confirm/all")
+    public void confirmAllAssistances(@RequestBody AssistanceRequest assistanceRequest) throws EciBienestarException {
+        Activity requestedActivity = new Activity();
+        requestedActivity.setActivityType(assistanceRequest.getActivityType());
+        requestedActivity.setYear(assistanceRequest.getYear());
+        requestedActivity.setSemester(assistanceRequest.getSemester());
+        Activity requiredActivity = activityServ.getActivityBySchedule(requestedActivity);
+        List<String> schedules = requiredActivity.getSchedules();
+        for(String schedule : schedules){
+            Schedule actSchedule = scheduleRep.getScheduleById(schedule);
+            if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
+                assistanceServ.confirmAllAssistances(actSchedule);
+            }
+        }
+    }
+
+    /**
      * Find existing assistance records by given search options.
      *
      * @param assistanceRequest Request object containing filters.
@@ -86,9 +136,9 @@ public class AssistanceController {
 
         for (String schedule : schedules) {
             Schedule actSchedule = scheduleRep.getScheduleById(schedule);
-            if (actSchedule.getNumberDay() == assistanceRequest.getNumberDay() &&
-                    actSchedule.getMonth() == assistanceRequest.getMonth()) {
-                return assistanceServ.getAssistanceByOptions(assistanceRequest);
+            if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay()
+                    && actSchedule.getMonth() == assistanceRequest.getMonth()){
+                return assistanceServ.getAssistanceByOptions(assistanceRequest,schedule);
             }
         }
 
@@ -113,9 +163,8 @@ public class AssistanceController {
 
         for (String schedule : schedules) {
             Schedule actSchedule = scheduleRep.getScheduleById(schedule);
-            if (actSchedule.getNumberDay() == assistanceRequest.getNumberDay() &&
-                    actSchedule.getMonth() == assistanceRequest.getMonth()) {
-                assistanceServ.updateConfirmationForAssitance(assistanceRequest);
+            if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
+                assistanceServ.updateConfirmationForAssitance(assistanceRequest, actSchedule);
             }
         }
     }
@@ -140,6 +189,8 @@ public class AssistanceController {
             Schedule actSchedule = scheduleRep.getScheduleById(schedule);
             if (actSchedule.getNumberDay() == assistanceRequest.getNumberDay() &&
                     actSchedule.getMonth() == assistanceRequest.getMonth()) {
+                actSchedule.deleteAssistance(assistanceRequest.getIdUser());
+                scheduleRep.save(actSchedule);
                 assistanceServ.deleteAssistanceForUser(assistanceRequest);
             }
         }

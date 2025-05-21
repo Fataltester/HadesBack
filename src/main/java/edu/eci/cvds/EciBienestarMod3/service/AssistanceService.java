@@ -42,42 +42,53 @@ public class AssistanceService {
     }
 
     /**
+     * Creates an assistance record for a student with confirmation set to false.
+     *
+     * @param schedule   The schedule ID to associate with the assistance.
+     * @param assistance The request containing student details.
+     * @return The saved Assistance object with confirmation set to false.
+     */
+    public Assistance studentCreateAssistance(String schedule, AssistanceRequest assistance) {
+        Assistance assistance1 = new Assistance();
+        assistance1.setIdSchedule(schedule);
+        assistance1.setUserId(assistance.getIdUser());
+        assistance1.setUserName(assistance.getUserName());
+        assistance1.setUserRol(assistance.getRolUser());
+        assistance1.setConfirmation(false);
+        return assistanceRepo.save(assistance1);
+    }
+
+    /**
      * Retrieves assistance records based on optional filter criteria such as
      * user ID, user name, role, and confirmation status.
      *
      * @param assistanceRequest Request containing filtering parameters.
      * @return A list of matching Assistance records.
      */
-    public List<Assistance> getAssistanceByOptions(AssistanceRequest assistanceRequest){
+    public List<Assistance> getAssistanceByOptions(AssistanceRequest assistanceRequest, String schedule){
         int userId = assistanceRequest.getIdUser();
         String userName = assistanceRequest.getUserName();
         String userRol = assistanceRequest.getRolUser();
         Boolean confirmation = assistanceRequest.getConfirmation();
-
-        return assistanceRepo.findAssistanceByOptions(
-                userId != 0 ? userId : 0, // Default to 0 if not provided
-                userName != null ? userName : ".*",
-                userRol != null ? userRol : ".*",
-                confirmation != null ? confirmation : true
-        );
-    }
-
-    /**
-     * Retrieves all assistance records for a given user across multiple schedules.
-     *
-     * @param assistanceRequest Request containing user information.
-     * @param schedules         List of schedule IDs to search in.
-     * @return A list of Assistance objects related to the user.
-     */
-    public List<Assistance> getAssistancesByUser(AssistanceRequest assistanceRequest, List<String> schedules){
+        List<Assistance> filteredAssistances;
+        if (confirmation != null) {
+            filteredAssistances = assistanceRepo.findAssistanceByOptions(
+                    userId != 0 ? userId : 0,
+                    userName != null ? userName : ".*",
+                    userRol != null ? userRol : ".*",
+                    confirmation
+            );
+        } else {
+            filteredAssistances = assistanceRepo.findAssistanceWithoutConfirmation(
+                    userId != 0 ? userId : 0,
+                    userName != null ? userName : ".*",
+                    userRol != null ? userRol : ".*"
+            );
+        }
         List<Assistance> totalAssistances = new ArrayList<>();
-        for(String schedule : schedules){
-            Schedule actSchedule = scheduleRepo.getScheduleById(schedule);
-            List<Integer> actAssistance = actSchedule.getAssistances();
-            for(Integer assistance : actAssistance){
-                if(assistance == assistanceRequest.getIdUser()){
-                    totalAssistances.add(assistanceRepo.findAssistanceByUserId(assistance));
-                }
+        for (Assistance filteredAssistance : filteredAssistances){
+            if(filteredAssistance.getIdSchedule().equals(schedule)){
+                totalAssistances.add(filteredAssistance);
             }
         }
         return totalAssistances;
@@ -88,11 +99,28 @@ public class AssistanceService {
      *
      * @param assistanceRequest Request containing user name and new confirmation status.
      */
-    public void updateConfirmationForAssitance(AssistanceRequest assistanceRequest){
-        Assistance currentAssistance = assistanceRepo.getAssistanceByUserName(assistanceRequest.getUserName());
-        if(currentAssistance.getConfirmation() != assistanceRequest.getConfirmation()){
-            currentAssistance.setConfirmation(assistanceRequest.getConfirmation());
-            assistanceRepo.save(currentAssistance);
+    public void updateConfirmationForAssitance(AssistanceRequest assistanceRequest, Schedule schedule){
+        List<Integer> assistances = schedule.getAssistances();
+        for(Integer assistanceId : assistances){
+            if(assistanceId == assistanceRequest.getIdUser()){
+                Assistance requiredAssistance = assistanceRepo.getAssistanceByUserId(assistanceId);
+                requiredAssistance.setConfirmation(true);
+                assistanceRepo.save(requiredAssistance);
+            }
+        }
+    }
+
+    /**
+     * Confirms all assistance records associated with a given schedule.
+     *
+     * @param schedule The schedule containing assistance records to confirm.
+     */
+    public void confirmAllAssistances(Schedule schedule){
+        List<Integer> assistances = schedule.getAssistances();
+        for(Integer assistanceId : assistances){
+            Assistance requiredAssistance = assistanceRepo.getAssistanceByUserId(assistanceId);
+            requiredAssistance.setConfirmation(true);
+            assistanceRepo.save(requiredAssistance);
         }
     }
 
