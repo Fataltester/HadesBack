@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
-    private final String SECRET_KEY = "ContraseñaSuperSecreta123";
+    private final String SECRET_KEY = "supersecretpassword1234567891011121314";
 
     /**
      * Validates the given JWT token.
