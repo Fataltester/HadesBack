@@ -1,5 +1,6 @@
 package edu.eci.cvds.EciBienestarMod3.controller;
 
+import edu.eci.cvds.EciBienestarMod3.configuration.JWT.JWTUser;
 import edu.eci.cvds.EciBienestarMod3.dto.ActivityOptionalRequest;
 import edu.eci.cvds.EciBienestarMod3.model.Activity;
 import edu.eci.cvds.EciBienestarMod3.model.EciBienestarException;
