@@ -47,7 +47,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: java-app
-
   deploy:
     runs-on: ubuntu-latest
     needs: test
