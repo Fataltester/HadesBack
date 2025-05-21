@@ -1,13 +1,14 @@
 package edu.eci.cvds.EciBienestarMod3.model;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.List;
-import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.data.annotation.Id;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Document(collection = "Resource")
+@Setter
+@Getter
+@NoArgsConstructor
 public class Resource {
 
-    @Id
-    private String id;
+    private String name;
+    private String amount;
 }
