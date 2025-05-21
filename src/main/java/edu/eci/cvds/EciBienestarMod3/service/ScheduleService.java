@@ -17,14 +17,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service class responsible for handling schedule-related operations,
+ * including creation, deletion, and state management of schedule records.
+ */
 @Service
 public class ScheduleService {
 
     @Autowired
     ScheduleMongoRepository scheduleRepository;
-  
-    @Autowired
-    ActivityMongoRepository activityRepository;
 
     @Autowired
     AssistanceMongoRepository assistanceRepository;
@@ -37,93 +38,147 @@ public class ScheduleService {
         if (schedule.getId() == null) {
             schedule.setId(UUID.randomUUID().toString());
         }
-      
-        //Para evitar que se actualice
-        if(scheduleRepository.existsById(schedule.getId())){
-            return  null;
-        }else{
+
+        if (scheduleRepository.existsById(schedule.getId())) {
+            return null;
+        } else {
             return scheduleRepository.save(schedule);
         }
     }
 
-    public Schedule findScheduleById(String id){
+    /**
+     * Finds a schedule by its ID.
+     *
+     * @param id The ID of the schedule.
+     * @return The corresponding Schedule object, or null if not found.
+     */
+    public Schedule findScheduleById(String id) {
         return scheduleRepository.findById(id).orElse(null);
     }
 
-    public List<String> createScheduleBetweenTwoDates(int semester, String activityId, DayOfWeek dayOfWeeks){
+    /**
+     * Creates multiple schedules between two semester-defined dates for a given day of the week.
+     *
+     * @param semester   The semester number (1 or 2).
+     * @param activityId The activity ID associated with the schedules.
+     * @param dayOfWeeks The day of the week for which schedules are created.
+     * @return A list of schedule IDs created for the specified criteria.
+     */
+    public List<String> createScheduleBetweenTwoDates(int semester, String activityId, DayOfWeek dayOfWeeks) {
         LocalDate startDate;
         LocalDate endDate;
-        if(semester == 1){
+
+        if (semester == 1) {
             startDate = LocalDate.of(2025, 2, 1);
             endDate = LocalDate.of(2025, 5, 31);
-        }else{
+        } else {
             startDate = LocalDate.of(2025, 8, 1);
             endDate = LocalDate.of(2025, 11, 30);
         }
+
         List<String> schedules = new ArrayList<>();
-        List<LocalDate> fechas = getDatesForWeekday(startDate, endDate, dayOfWeeks);
-        for (LocalDate fecha : fechas) {
+        List<LocalDate> dates = getDatesForWeekday(startDate, endDate, dayOfWeeks);
+
+        for (LocalDate date : dates) {
             Schedule schedule = new Schedule();
-            schedule.setNumberDay(fecha.getDayOfMonth());
-            schedule.setMonth(fecha.getMonth());
-            schedule.setYear(fecha.getYear());
+            schedule.setNumberDay(date.getDayOfMonth());
+            schedule.setMonth(date.getMonth());
+            schedule.setYear(date.getYear());
             schedule.setIdActivity(activityId);
             Schedule newSchedule = scheduleRepository.save(schedule);
             schedules.add(newSchedule.getId());
         }
+
         return schedules;
     }
 
-    public Schedule deleteSchedule(Schedule schedule){
+    /**
+     * Cancels a schedule if it is not already canceled or finished.
+     *
+     * @param schedule The schedule to cancel.
+     * @return The updated Schedule object with state set to CANCELADA, or the original if not modifiable.
+     */
+    public Schedule deleteSchedule(Schedule schedule) {
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(schedule.getId());
 
-        if(scheduleOptional.isPresent()){
+        if (scheduleOptional.isPresent()) {
             Schedule scheduleUpdate = scheduleOptional.get();
-            if(scheduleUpdate.getState() != ScheduleState.CANCELADA && scheduleUpdate.getState() != ScheduleState.TERMINADA ) {
+            if (scheduleUpdate.getState() != ScheduleState.CANCELADA &&
+                    scheduleUpdate.getState() != ScheduleState.TERMINADA) {
                 scheduleUpdate.setState(ScheduleState.CANCELADA);
                 return scheduleRepository.save(scheduleUpdate);
-            }else{
+            } else {
                 return scheduleUpdate;
             }
-        }else{
-            return  null;
+        } else {
+            return null;
         }
     }
 
-
-    public void deleteAdminShcedule(String schedule){
+    /**
+     * Permanently deletes a schedule by its ID (admin-level operation).
+     *
+     * @param schedule The ID of the schedule to delete.
+     */
+    public void deleteAdminShcedule(String schedule) {
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(schedule);
 
-        if(scheduleOptional.isPresent()) {
+        if (scheduleOptional.isPresent()) {
             Schedule scheduleDelete = scheduleOptional.get();
             scheduleRepository.deleteById(scheduleDelete.getId());
         }
     }
 
-    
-    public Schedule changeState(String id, ScheduleState newState){
+    /**
+     * Changes the state of a schedule given its ID.
+     *
+     * @param id       The ID of the schedule.
+     * @param newState The new state to set.
+     * @return The updated Schedule object, or null if not found.
+     */
+    public Schedule changeState(String id, ScheduleState newState) {
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(id);
 
-        if(scheduleOptional.isPresent()){
+        if (scheduleOptional.isPresent()) {
             Schedule schedule = scheduleOptional.get();
             schedule.setState(newState);
             if(newState == ScheduleState.CANCELADA) {
                 notificateAllAssistancesForCancelation(schedule);
             }
             return scheduleRepository.save(schedule);
-        }else{
-            return  null;
+        } else {
+            return null;
         }
     }
 
-    List<Schedule> findByState(ScheduleState state){
+    /**
+     * Finds schedules by a specific state.
+     *
+     * @param state The state to filter by.
+     * @return A list of schedules matching the given state.
+     */
+    List<Schedule> findByState(ScheduleState state) {
         return scheduleRepository.findByState(state);
     }
 
-    List<Schedule> findByStates(List<ScheduleState> states){
-        return  scheduleRepository.findByStateIn((states));
+    /**
+     * Finds schedules that match any of the provided states.
+     *
+     * @param states A list of states to filter by.
+     * @return A list of schedules matching any of the provided states.
+     */
+    List<Schedule> findByStates(List<ScheduleState> states) {
+        return scheduleRepository.findByStateIn(states);
     }
 
+    /**
+     * Utility method to get all dates between two dates that match a specific day of the week.
+     *
+     * @param startDate  Start date of the range.
+     * @param endDate    End date of the range.
+     * @param targetDay  The day of the week to match.
+     * @return A list of LocalDate objects representing all matching days.
+     */
     private List<LocalDate> getDatesForWeekday(LocalDate startDate, LocalDate endDate, DayOfWeek targetDay) {
         List<LocalDate> dates = new ArrayList<>();
         LocalDate current = startDate;
