@@ -1,13 +1,13 @@
-package edu.eci.cvds;
+package edu.eci.cvds.EciBienestarMod3;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class HadesBackApplication {
+public class EciBienestarMod3 {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HadesBackApplication.class, args);
+		SpringApplication.run(EciBienestarMod3.class, args);
 	}
 
 }

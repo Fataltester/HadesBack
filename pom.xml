@@ -9,27 +9,21 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>edu.eci.cvds</groupId>
-	<artifactId>LabReserves</artifactId>
+	<artifactId>EciBienestarMod3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>LabReserves</name>
-	<description>Project of reserves of the ECI computer laboratory</description>
+	<name>EciBienestarMod3</name>
+	<description>Extracurricular Class Attendance Module</description>
 	<properties>
 		<java.version>17</java.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
-		<sonar.organization>sunteaback</sonar.organization>
+		<sonar.organization>hadesback</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>3.3.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
 			<version>3.3.2</version>
 		</dependency>
 		<dependency>
@@ -84,19 +78,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-json</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-			<version>3.2.8</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
@@ -138,6 +119,31 @@
 			<artifactId>lombok</artifactId>
 			<version>1.18.34</version>
 			<optional>true</optional>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.8.6</version>
+		</dependency>
+
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>4.4.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
 	</dependencies>
@@ -206,16 +212,14 @@
 						<configuration>
 							<excludes>
 								<exclude>/configurators/</exclude>
-								<exclude>edu/eci/cvds/labReserves/services/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/controller/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/collections/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/dto/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/repository.mongodb/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/LabReserve.*</exclude>
-								<exclude>edu/eci/cvds/labReserves/security/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/util/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/security/**</exclude>
-								<exclude>edu/eci/cvds/labReserves/config/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/service/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/controller/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/dto/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/repository/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/EciBienestarMod3.*</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/security/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/config/**</exclude>
+								<exclude>edu/eci/cvds/EciBienestarMod3/notifications/**</exclude>
 							</excludes>
 						</configuration>
 					</execution>
@@ -232,7 +236,7 @@
 										<limit>
 											<counter>CLASS</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.0</minimum><!--Porcentaje mínimo de cubrimiento para construir el proyecto-->
+											<minimum>0</minimum><!--Porcentaje mínimo de cubrimiento para construir el proyecto-->
 										</limit>
 									</limits>
 								</rule>
