@@ -29,6 +29,12 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui");
+    }
+
     /**
      * Intercepts each HTTP request to verify the JWT token.
      * Checks if the Authorization header is present and correctly formatted.

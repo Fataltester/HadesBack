@@ -31,6 +31,9 @@ public class ScheduleService {
     AssistanceMongoRepository assistanceRepository;
 
     @Autowired
+    ActivityMongoRepository activityRepository;
+
+    @Autowired
     IEmailService emailService;
 
     Schedule createSchedule(Schedule schedule){
@@ -200,7 +203,12 @@ public class ScheduleService {
             Assistance currentAssistance = assistanceRepository.getAssistanceByUserId(idAssistance);
             String userEmail = currentAssistance.getUserEmail();
             String subject = "Cancelación de Actividad";
-            String message = "La clase ha sido cancelada.";
+            String message = String.format(
+                    "Hola, tu asistencia al evento del %d de %s de %d ha sido confirmada.",
+                    schedule.getNumberDay(),
+                    schedule.getMonth(),
+                    schedule.getYear()
+            );
             emailService.sendEmail(new String[]{userEmail}, subject, message);
         }
     }
