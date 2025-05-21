@@ -52,7 +52,7 @@ public class AssistanceController {
             if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
                 actSchedule.addAssistance(assistanceRequest.getIdUser());
                 scheduleRep.save(actSchedule);
-                return assistanceServ.createAssistance(schedule,assistanceRequest);
+                return assistanceServ.createAssistance(schedule,assistanceRequest, requiredActivity, actSchedule);
             }
         }
         throw new EciBienestarException(EciBienestarException.TYPE_NOT_FOUND);
@@ -71,7 +71,7 @@ public class AssistanceController {
             if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
                 actSchedule.addAssistance(assistanceRequest.getIdUser());
                 scheduleRep.save(actSchedule);
-                return assistanceServ.studentCreateAssistance(schedule,assistanceRequest);
+                return assistanceServ.studentCreateAssistance(schedule,assistanceRequest, requiredActivity, actSchedule);
             }
         }
         throw new EciBienestarException(EciBienestarException.TYPE_NOT_FOUND);
@@ -88,7 +88,7 @@ public class AssistanceController {
         for(String schedule : schedules){
             Schedule actSchedule = scheduleRep.getScheduleById(schedule);
             if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
-                assistanceServ.confirmAllAssistances(assistanceRequest, actSchedule);
+                assistanceServ.confirmAllAssistances(assistanceRequest, actSchedule, requestedActivity, actSchedule);
             }
         }
     }
@@ -121,7 +121,7 @@ public class AssistanceController {
         for(String schedule : schedules){
             Schedule actSchedule = scheduleRep.getScheduleById(schedule);
             if(actSchedule.getNumberDay() == assistanceRequest.getNumberDay() && actSchedule.getMonth() == assistanceRequest.getMonth()){
-                assistanceServ.updateConfirmationForAssitance(assistanceRequest, actSchedule);
+                assistanceServ.updateConfirmationForAssitance(assistanceRequest, actSchedule, requiredActivity, actSchedule);
             }
         }
     }

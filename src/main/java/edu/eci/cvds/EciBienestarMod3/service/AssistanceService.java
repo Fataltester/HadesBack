@@ -28,7 +28,7 @@ public class AssistanceService {
     @Autowired
     private IEmailService emailService;
 
-    public Assistance createAssistance(String schedule, AssistanceRequest assistance) {
+    public Assistance createAssistance(String schedule, AssistanceRequest assistance, Activity actualActivity, Schedule actSchedule) {
         Assistance assistance1 = new Assistance();
         assistance1.setIdSchedule(schedule);
         assistance1.setUserId(assistance.getIdUser());
@@ -36,10 +36,19 @@ public class AssistanceService {
         assistance1.setUserRol(assistance.getRolUser());
         assistance1.setConfirmation(assistance.getConfirmation());
         assistance1.setUserEmail(assistance.getUserEmail());
+        String userEmail = assistance.getUserEmail();
+        String subject = "Confirmación de Inscripcion a la clase"+ " " + actualActivity.getActivityType().toString();
+        String message = String.format(
+                "Hola, tu inscripción al evento está programada para el %d de %s de %d.",
+                actSchedule.getNumberDay(),
+                actSchedule.getMonth(),
+                actSchedule.getYear()
+        );
+        emailService.sendEmail(new String[]{userEmail}, subject, message);
         return assistanceRepo.save(assistance1);
     }
 
-    public Assistance studentCreateAssistance(String schedule, AssistanceRequest assistance) {
+    public Assistance studentCreateAssistance(String schedule, AssistanceRequest assistance, Activity actualActivity, Schedule actSchedule) {
         Assistance assistance1 = new Assistance();
         assistance1.setIdSchedule(schedule);
         assistance1.setUserId(assistance.getIdUser());
@@ -47,6 +56,15 @@ public class AssistanceService {
         assistance1.setUserRol(assistance.getRolUser());
         assistance1.setUserEmail(assistance.getUserEmail());
         assistance1.setConfirmation(false);
+        String userEmail = assistance.getUserEmail();
+        String subject = "Confirmación de Inscripcion a la clase"+ " " + actualActivity.getActivityType().toString();
+        String message = String.format(
+                "Hola, tu inscripción al evento está programada para el %d de %s de %d.",
+                actSchedule.getNumberDay(),
+                actSchedule.getMonth(),
+                actSchedule.getYear()
+        );
+        emailService.sendEmail(new String[]{userEmail}, subject, message);
         return assistanceRepo.save(assistance1);
     }
 
@@ -82,7 +100,7 @@ public class AssistanceService {
         return totalAssistances;
     }
 
-    public void updateConfirmationForAssitance(AssistanceRequest assistanceRequest, Schedule schedule){
+    public void updateConfirmationForAssitance(AssistanceRequest assistanceRequest, Schedule schedule, Activity actActivity, Schedule actSchedule){
         List<Integer> assistances = schedule.getAssistances();
         for(Integer assistanceId : assistances){
             if(assistanceId == assistanceRequest.getIdUser()){
@@ -90,22 +108,32 @@ public class AssistanceService {
                 requiredAssistance.setConfirmation(true);
                 assistanceRepo.save(requiredAssistance);
                 String userEmail = requiredAssistance.getUserEmail();
-                String subject = "Confirmación de asistencia";
-                String message = "Hola, tu asistencia al evento ha sido confirmada exitosamente.";
+                String subject = "Confirmación de Inscripcion a la clase"+ " " + actActivity.getActivityType().toString();
+                String message = String.format(
+                        "Hola, tu asistencia al evento del %d de %s de %d ha sido confirmada.",
+                        actSchedule.getNumberDay(),
+                        actSchedule.getMonth(),
+                        actSchedule.getYear()
+                );
                 emailService.sendEmail(new String[]{userEmail}, subject, message);
             }
         }
 
     }
 
-    public void confirmAllAssistances(AssistanceRequest assistanceRequest, Schedule schedule){
+    public void confirmAllAssistances(AssistanceRequest assistanceRequest, Schedule schedule, Activity actActivity, Schedule actSchedule){
         List<Integer> assistances = schedule.getAssistances();
         for(Integer assistanceId : assistances){
             Assistance requiredAssistance = assistanceRepo.getAssistanceByUserId(assistanceId);
             requiredAssistance.setConfirmation(true);
             String userEmail = requiredAssistance.getUserEmail();
-            String subject = "Confirmación de asistencia";
-            String message = "Hola, tu asistencia al evento ha sido confirmada exitosamente.";
+            String subject = "Confirmación de Inscripcion a la clase"+ " " + actActivity.getActivityType();
+            String message = String.format(
+                    "Hola, tu asistencia al evento del %d de %s de %d ha sido confirmada.",
+                    actSchedule.getNumberDay(),
+                    actSchedule.getMonth(),
+                    actSchedule.getYear()
+            );
             emailService.sendEmail(new String[]{userEmail}, subject, message);
             assistanceRepo.save(requiredAssistance);
             }
