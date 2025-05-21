@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.eci.cvds.EciBienestarMod3.dto.AssistanceRequest;
 import edu.eci.cvds.EciBienestarMod3.model.Activity;
 import edu.eci.cvds.EciBienestarMod3.model.Schedule;
+import edu.eci.cvds.EciBienestarMod3.notifications.IEmailService;
 import edu.eci.cvds.EciBienestarMod3.repository.AssistanceMongoRepository;
 import edu.eci.cvds.EciBienestarMod3.repository.ScheduleMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class AssistanceService {
     private AssistanceMongoRepository assistanceRepo;
     @Autowired
     private ScheduleMongoRepository scheduleRepo;
+    @Autowired
+    private IEmailService emailService;
 
     public Assistance createAssistance(String schedule, AssistanceRequest assistance) {
         Assistance assistance1 = new Assistance();
@@ -32,6 +35,7 @@ public class AssistanceService {
         assistance1.setUserName(assistance.getUserName());
         assistance1.setUserRol(assistance.getRolUser());
         assistance1.setConfirmation(assistance.getConfirmation());
+        assistance1.setUserEmail(assistance.getUserEmail());
         return assistanceRepo.save(assistance1);
     }
 
@@ -41,6 +45,7 @@ public class AssistanceService {
         assistance1.setUserId(assistance.getIdUser());
         assistance1.setUserName(assistance.getUserName());
         assistance1.setUserRol(assistance.getRolUser());
+        assistance1.setUserEmail(assistance.getUserEmail());
         assistance1.setConfirmation(false);
         return assistanceRepo.save(assistance1);
     }
@@ -49,6 +54,7 @@ public class AssistanceService {
         int userId = assistanceRequest.getIdUser();
         String userName = assistanceRequest.getUserName();
         String userRol = assistanceRequest.getRolUser();
+        String userEmail = assistanceRequest.getUserEmail();
         Boolean confirmation = assistanceRequest.getConfirmation();
         List<Assistance> filteredAssistances;
         if (confirmation != null) {
@@ -56,13 +62,15 @@ public class AssistanceService {
                     userId != 0 ? userId : 0,
                     userName != null ? userName : ".*",
                     userRol != null ? userRol : ".*",
+                    userEmail != null ? userEmail : ".*",
                     confirmation
             );
         } else {
             filteredAssistances = assistanceRepo.findAssistanceWithoutConfirmation(
                     userId != 0 ? userId : 0,
                     userName != null ? userName : ".*",
-                    userRol != null ? userRol : ".*"
+                    userRol != null ? userRol : ".*",
+                    userEmail != null ? userEmail : ".*"
             );
         }
         List<Assistance> totalAssistances = new ArrayList<>();
@@ -81,8 +89,13 @@ public class AssistanceService {
                 Assistance requiredAssistance = assistanceRepo.getAssistanceByUserId(assistanceId);
                 requiredAssistance.setConfirmation(true);
                 assistanceRepo.save(requiredAssistance);
+                String userEmail = requiredAssistance.getUserEmail();
+                String subject = "Confirmación de asistencia";
+                String message = "Hola, tu asistencia al evento ha sido confirmada exitosamente.";
+                emailService.sendEmail(new String[]{userEmail}, subject, message);
             }
         }
+
     }
 
     public void confirmAllAssistances(AssistanceRequest assistanceRequest, Schedule schedule){
@@ -90,6 +103,10 @@ public class AssistanceService {
         for(Integer assistanceId : assistances){
             Assistance requiredAssistance = assistanceRepo.getAssistanceByUserId(assistanceId);
             requiredAssistance.setConfirmation(true);
+            String userEmail = requiredAssistance.getUserEmail();
+            String subject = "Confirmación de asistencia";
+            String message = "Hola, tu asistencia al evento ha sido confirmada exitosamente.";
+            emailService.sendEmail(new String[]{userEmail}, subject, message);
             assistanceRepo.save(requiredAssistance);
             }
     }

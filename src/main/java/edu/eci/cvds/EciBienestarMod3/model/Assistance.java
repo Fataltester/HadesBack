@@ -18,6 +18,8 @@ public class Assistance {
     private Boolean confirmation;  // Confirmación de asistencia
     private String userName;       // Nombre completo del usuario
     private int userId;            // ID del usuario
+    private String userEmail;      // Email del usuario
+
     private String userRol;        // Rol del usuario (Estudiante, Docente, etc.)
     private String idSchedule;     // ID de referencia al horario de cada asistencia
 

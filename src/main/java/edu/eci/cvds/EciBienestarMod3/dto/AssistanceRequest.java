@@ -16,6 +16,7 @@ public class AssistanceRequest {
     private String userName;
     private String rolUser;
     private Boolean confirmation;
+    private String userEmail;
 
     //DATA FOR SEARCH THE ACTIVITY
     private String activityType;

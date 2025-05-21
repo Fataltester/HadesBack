@@ -38,9 +38,10 @@ public interface AssistanceMongoRepository extends MongoRepository<Assistance, S
             "'userId': { $gte: ?0 }, " +
             "'userName': { $regex: ?1, $options: 'i' }, " +
             "'userRol': { $regex: ?2, $options: 'i' }, " +
-            "'confirmation': ?3 " +
+            "'userEmail': { $regex: ?3, $options: 'i' }, " +
+            "'confirmation': ?4 " +
             "}")
-    List<Assistance> findAssistanceByOptions(int userId, String userName, String userRol, Boolean confirmation);
+    List<Assistance> findAssistanceByOptions(int userId, String userName, String userRol, String userEmail, Boolean confirmation);
 
 
     Assistance findAssistanceByUserId(int userId);
@@ -51,6 +52,6 @@ public interface AssistanceMongoRepository extends MongoRepository<Assistance, S
 
     Assistance getAssistanceByUserName(String userName);
 
-    @Query("{ 'userId': { $gte: ?0 }, 'userName': { $regex: ?1, $options: 'i' }, 'userRol': { $regex: ?2, $options: 'i' } }")
-    List<Assistance> findAssistanceWithoutConfirmation(Integer userId, String userName, String userRol);
+    @Query("{ 'userId': { $gte: ?0 }, 'userName': { $regex: ?1, $options: 'i' },'userEmail': { $regex: ?2, $options: 'i' }, 'userRol': { $regex: ?3, $options: 'i' } }")
+    List<Assistance> findAssistanceWithoutConfirmation(Integer userId, String userName, String userEmail, String userRol);
 }
